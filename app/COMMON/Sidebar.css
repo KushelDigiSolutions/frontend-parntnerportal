@@ -1,0 +1,93 @@
+/* Sidebar base */
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 220px;
+  height: 100vh;
+  background: #fff;
+  border-right: 1px solid #e5e7eb;
+  box-shadow: 2px 0 6px rgba(0, 0, 0, 0.08);
+  padding: 24px 16px;
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.3s ease;
+  z-index: 50;
+}
+
+.menu-icon {
+  width: 20px;
+  height: 20px;
+  object-fit: contain;
+  filter: brightness(0) saturate(100%);
+}
+
+
+/* Mobile default hidden */
+.sidebar {
+  transform: translateX(-100%);
+}
+
+/* Open state */
+.sidebar.open {
+  transform: translateX(0);
+}
+
+/* Desktop always visible */
+@media (min-width: 768px) {
+  .sidebar {
+    transform: translateX(0);
+  }
+}
+
+/* Header (logo) */
+.sidebar-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.logo {
+  height: 40px;
+  width: 100%;
+  object-fit: contain;
+}
+
+/* Nav */
+.sidebar-nav {
+  flex: 1;
+}
+
+.sidebar-nav ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+/* Items */
+.sidebar-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  color: #374151;
+  transition: background 0.2s ease;
+}
+
+.sidebar-item:hover {
+  background: #f3f4f6;
+}
+
+/* Icons & text */
+.sidebar-icon {
+  font-size: 20px;
+  color: #374151;
+}
+
+.sidebar-text {
+  font-weight: 500;
+  font-size: 15px;
+  color: #111827;
+}

@@ -1,0 +1,129 @@
+/* Navbar container */
+.navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 40;
+  width: 100%;
+  background: #fff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  border-bottom: 1px solid #e5e7eb;
+  padding: 12px 24px;
+  display: flex;
+  align-items: center;
+  transition: margin-left 0.3s ease;
+}
+
+/* Left back button (desktop only) */
+.back-btn {
+  display: none;
+  background: #f3f4f6;
+  border: none;
+  padding: 8px;
+  border-radius: 8px;
+  color: #4b5563;
+  cursor: pointer;
+}
+
+.back-btn:hover {
+  background: #e5e7eb;
+}
+
+/* Right user info */
+.user-info {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+/* Icons */
+.icon-sm {
+  font-size: 16px;
+  color: #4b5563;
+}
+
+.icon-md {
+  font-size: 20px;
+  color: #6b7280;
+}
+
+.icon-lg {
+  font-size: 24px;
+  color: #6b7280;
+}
+
+/* Username */
+.username {
+  font-weight: 500;
+  color: #111827;
+}
+
+/* Hamburger/close (mobile only) */
+.menu-btn {
+  /* background: #f3f4f6; */
+  border: none;
+  padding: 8px;
+  border-radius: 8px;
+  color: #4b5563;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+}
+
+
+
+/* Responsive: show/hide */
+@media (min-width: 768px) {
+  .back-btn {
+    display: flex;
+    align-items: center;
+  }
+  .menu-btn {
+    display: none;
+  }
+
+  /* 🟢 Sidebar ka space chhodke navbar ko shift karo */
+  .navbar {
+    margin-left: 220px; /* sidebar width jitna */
+    width: calc(100% - 220px);
+  }
+}
+
+.user-dropdown {
+  position: relative;
+  display: inline-block;
+  cursor: pointer;
+}
+
+.username {
+  margin-left: 6px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.dropdown-menu {
+  position: absolute;
+  top: 120%;
+  right: 0;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  padding: 6px 0;
+  min-width: 120px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  z-index: 20;
+}
+
+.dropdown-menu li {
+  list-style: none;
+  padding: 8px 12px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.dropdown-menu li:hover {
+  background: #f5f5f5;
+}
+

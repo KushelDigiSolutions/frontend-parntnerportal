@@ -1,5 +1,5 @@
 .affiliate-container {
-  min-height: 670px;
+  min-height: 630px;
   background: #f5f9ff;
   padding: 30px;
   display: flex;
@@ -67,6 +67,7 @@
   min-width: 200px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
   display: flex;
+  gap: 25px;
   justify-content: space-between;
   /* flex-direction: column; */
   align-items: center;

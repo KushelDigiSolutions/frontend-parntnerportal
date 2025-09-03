@@ -84,11 +84,11 @@ export default function AffiliateDash() {
           <>
             <div className="stats-box earnings">
               <p>All time earnings</p>
-              <h3>$0</h3>
+              <h3>0</h3>
             </div>
             <div className="stats-box month">
               <p>Last month earnings</p>
-              <h3>$0</h3>
+              <h3>0</h3>
             </div>
           </>
         ) : (
@@ -170,9 +170,9 @@ export default function AffiliateDash() {
                   <td>{item.name}</td>
                   <td>{item.email}</td>
                   <td>{item.mobilePhone}</td>
-                  <td>{item.platform}</td>
+                  <td className="capitalize">{item.platform}</td>
                   <td>{item.affiliate_handle}</td>
-                  <td>
+                  <td className="capitalize">
                     <span
                       className={`status ${item.status?.toLowerCase()}`}
                     >

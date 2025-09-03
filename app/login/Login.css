@@ -155,7 +155,8 @@
 }
 
 .forgot-link {
-  color: #3b82f6;
+  color: #174da4;
+  font-weight: 500;
   text-decoration: none;
   font-size: 13px;
 }
@@ -168,7 +169,7 @@
 .login-btn {
   width: 100%;
   padding: 12px;
-  background: #8b5cf6;
+  background: #3636d7;
   color: #fff;
   border: none;
   border-radius: 8px;
@@ -179,7 +180,7 @@
 }
 
 .login-btn:hover {
-  background: #7c3aed;
+  background: #463aed;
 }
 
 /* Signup text */

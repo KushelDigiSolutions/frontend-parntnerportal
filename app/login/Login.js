@@ -28,7 +28,7 @@ export default function Login() {
         localStorage.setItem("user_data", JSON.stringify(data.user));
 
         // redirect
-        window.location.href = "/affiliate-dashboard";
+        window.location.href = "/admin-dashboard";
       }
       else {
         setError(data.message || "Login failed");
@@ -42,7 +42,7 @@ export default function Login() {
   useEffect(() => {
     const token = localStorage.getItem("user_token");
     if (token) {
-      window.location.href = "/affiliate-dashboard";
+      window.location.href = "/admin-dashboard";
     }
   }, []);
 

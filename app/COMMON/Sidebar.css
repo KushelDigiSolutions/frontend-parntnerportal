@@ -76,9 +76,9 @@
   transition: background 0.2s ease;
 }
 
-.sidebar-item:hover {
+/* .sidebar-item:hover {
   background: #f3f4f6;
-}
+} */
 
 /* Icons & text */
 .sidebar-icon {

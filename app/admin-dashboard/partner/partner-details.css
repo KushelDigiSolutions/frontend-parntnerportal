@@ -1,0 +1,106 @@
+/* Common Card Full Width */
+.partner-details-card,
+.details-card {
+    background: #fff;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    padding: 24px;
+    margin: 20px 0;
+    width: 100%;
+    /* ✅ Full width */
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+/* Section Title */
+.partner-details-card h3,
+.details-card h3 {
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid #f0f0f0;
+    color: #111827;
+}
+
+/* Info Grid (2 column format) */
+.partner-info-grid,
+.details-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 30px 40px;
+    font-size: 14px;
+    margin-bottom: 16px;
+}
+
+.partner-info-grid div,
+.details-grid div {
+    color: #333;
+    line-height: 1.5;
+}
+
+.partner-info-grid div span,
+.details-grid div span {
+    font-weight: 600;
+    margin-right: 6px;
+    color: #374151;
+}
+
+/* Status */
+.status.active {
+    color: green;
+    font-weight: 600;
+}
+
+.status.inactive {
+    color: red;
+    font-weight: 600;
+}
+
+/* Stores Section */
+.partner-stores-section {
+    margin-top: 24px;
+}
+
+.partner-stores-section h3 {
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 12px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid #f0f0f0;
+    color: #111827;
+}
+
+/* Stores Table */
+.partner-stores-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.partner-stores-table th,
+.partner-stores-table td {
+    padding: 10px;
+    border-bottom: 1px solid #eee;
+    text-align: left;
+    font-size: 14px;
+}
+
+.partner-stores-table thead {
+    background: #f9fafb;
+    font-weight: 600;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+
+    .partner-info-grid,
+    .details-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 768px) {
+    .details-grid {
+        grid-template-columns: 1fr;
+        gap: 20px 0;
+    }
+}

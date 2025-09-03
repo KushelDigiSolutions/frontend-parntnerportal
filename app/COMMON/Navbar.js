@@ -47,8 +47,7 @@ export default function Navbar({ sidebarOpen, setSidebarOpen }) {
 
 
     const handleLogout = () => {
-        localStorage.removeItem("user");
-        localStorage.removeItem("user_token");
+        localStorage.clear();
         window.location.href = "/login";
     };
 

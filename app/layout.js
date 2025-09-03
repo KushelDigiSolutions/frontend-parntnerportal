@@ -34,7 +34,7 @@ export default function RootLayout({ children }) {
           {!isLoginPage && (
             <Navbar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
           )}
-          <main className={!isLoginPage ? "pt-[56px] min-h-screen" : "min-h-screen"}>
+          <main className={!isLoginPage ? "pt-[56px] min-h-screen bg-[#f5f9ff]" : "min-h-screen"}>
             {children}
           </main>
         </div>

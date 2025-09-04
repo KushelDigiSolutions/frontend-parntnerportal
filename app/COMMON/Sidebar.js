@@ -18,7 +18,7 @@ export default function Sidebar({ open }) {
 
   // Define menu items for each role
   const adminMenu = [
-    { name: "Dashboard", icon: "https://res.cloudinary.com/dd9tagtiw/image/upload/v1749203830/saka_i1vg99.svg", link: "/admin-dashboard" },
+    { name: "Dashboard", icon: "https://res.cloudinary.com/dd9tagtiw/image/upload/v1749203830/saka_i1vg99.svg", link: "/dashboard" },
     { name: "Partner Request", icon: "https://res.cloudinary.com/dd9tagtiw/image/upload/v1749203830/saka_i1vg99.svg" },
   ];
   

@@ -86,8 +86,8 @@
 
   /* 🟢 Sidebar ka space chhodke navbar ko shift karo */
   .navbar {
-    margin-left: 220px; /* sidebar width jitna */
-    width: calc(100% - 220px);
+    margin-left: 256px; /* sidebar width jitna */
+    width: calc(100% - 256px);
   }
 }
 

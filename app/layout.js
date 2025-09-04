@@ -30,7 +30,7 @@ export default function RootLayout({ children }) {
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         {!isLoginPage && <Sidebar open={sidebarOpen} setOpen={setSidebarOpen} />}
-        <div className={!isLoginPage ? "md:ml-55" : ""}>
+        <div className={!isLoginPage ? "md:ml-64" : ""}>
           {!isLoginPage && (
             <Navbar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
           )}

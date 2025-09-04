@@ -202,7 +202,7 @@ export default function AffiliateDash() {
                           gap: 8,
                           cursor: 'pointer',
                         }}
-                        onClick={() => router.push(`/admin-dashboard/partner/${item.id}`)}
+                        onClick={() => router.push(`/dashboard/partner/${item.id}`)}
                       >
                         <FiEye style={{ color: "#4f46e5", fontSize: 18, marginRight: 4 }} />
                       </button>

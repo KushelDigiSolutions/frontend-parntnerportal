@@ -6,7 +6,7 @@ This file lists all available API endpoints for your backend, grouped by resourc
 
 ## Store Endpoints
 
-- `POST   /partner-store/`  
+- `POST   /partner-store`  
   **Roles:** admin, super_admin  
   **Description:** Create a new store
 

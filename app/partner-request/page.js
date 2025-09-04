@@ -3,7 +3,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { FiEye } from "react-icons/fi";
 import { BsThreeDotsVertical } from "react-icons/bs";
 import { MdCheckCircle, MdCancel } from "react-icons/md";
-import "../admin-dashboard/AffiliateDash.css";
+import "../dashboard/AffiliateDash.css";
 
 export default function PartnerRequest() {
     const [requests, setRequests] = useState([]);
@@ -226,19 +226,19 @@ export default function PartnerRequest() {
                         boxShadow: '0 4px 24px rgba(0,0,0,0.12)',
                         position: 'relative',
                     }} onClick={e => e.stopPropagation()}>
-                        <button style={{position:'absolute',top:10,right:16,fontSize:22,border:'none',background:'none',cursor:'pointer'}} onClick={() => setViewData(null)}>&times;</button>
-                        <h2 style={{marginBottom:16,fontWeight:600,fontSize:20}}>Partner Details</h2>
-                        <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16,fontSize:15}}>
+                        <button style={{ position: 'absolute', top: 10, right: 16, fontSize: 22, border: 'none', background: 'none', cursor: 'pointer' }} onClick={() => setViewData(null)}>&times;</button>
+                        <h2 style={{ marginBottom: 16, fontWeight: 600, fontSize: 20 }}>Partner Details</h2>
+                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, fontSize: 15 }}>
                             <div><b>Name:</b> {viewData.name}</div>
                             <div><b>Email:</b> {viewData.email}</div>
                             <div><b>Mobile:</b> {viewData.mobilePhone}</div>
                             <div><b>Platform:</b> {viewData.platform}</div>
                             <div><b>Affiliate Handle:</b> {viewData.affiliate_handle}</div>
                             <div><b>Status:</b> {viewData.status}</div>
-                            <div style={{gridColumn:'1/3'}}><b>Reference Link:</b> {viewData.refernceLink}</div>
-                            <div style={{gridColumn:'1/3'}}><b>Description:</b> {viewData.description}</div>
-                            <div style={{gridColumn:'1/3'}}><b>Additional Info:</b> {viewData.additional_info}</div>
-                            <div style={{gridColumn:'1/3'}}><b>Created At:</b> {viewData.created_at ? new Date(viewData.created_at).toLocaleDateString() : ''}</div>
+                            <div style={{ gridColumn: '1/3' }}><b>Reference Link:</b> {viewData.refernceLink}</div>
+                            <div style={{ gridColumn: '1/3' }}><b>Description:</b> {viewData.description}</div>
+                            <div style={{ gridColumn: '1/3' }}><b>Additional Info:</b> {viewData.additional_info}</div>
+                            <div style={{ gridColumn: '1/3' }}><b>Created At:</b> {viewData.created_at ? new Date(viewData.created_at).toLocaleDateString() : ''}</div>
                         </div>
                     </div>
                 </div>
@@ -370,9 +370,9 @@ function DropdownMenu({ item, onView }) {
                     width: 130,
                     overflow: 'hidden',
                 }}>
-                    <DropdownItem icon={<FiEye style={{color:'#4f46e5', fontSize:18}} />} label="View" onClick={() => { setOpen(false); onView(item); }} />
-                    <DropdownItem icon={<MdCheckCircle style={{color:'#22c55e', fontSize:18}} />} label={loadingType === 'approve' ? "Approving..." : "Approved"} onClick={handleApprove} disabled={loadingType !== null} />
-                    <DropdownItem icon={<MdCancel style={{color:'#ef4444', fontSize:18}} />} label={loadingType === 'reject' ? "Rejecting..." : "Rejected"} onClick={handleReject} disabled={loadingType !== null} />
+                    <DropdownItem icon={<FiEye style={{ color: '#4f46e5', fontSize: 18 }} />} label="View" onClick={() => { setOpen(false); onView(item); }} />
+                    <DropdownItem icon={<MdCheckCircle style={{ color: '#22c55e', fontSize: 18 }} />} label={loadingType === 'approve' ? "Approving..." : "Approved"} onClick={handleApprove} disabled={loadingType !== null} />
+                    <DropdownItem icon={<MdCancel style={{ color: '#ef4444', fontSize: 18 }} />} label={loadingType === 'reject' ? "Rejecting..." : "Rejected"} onClick={handleReject} disabled={loadingType !== null} />
                 </div>
             )}
         </div>

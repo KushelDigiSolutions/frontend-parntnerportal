@@ -201,7 +201,7 @@ export default function PartnerPage() {
 
 
   if (loading) return <div className="affiliate-container">Loading...</div>;
-  if (error) return <div className="affiliate-container">{error}</div>;
+  // if (error) return <div className="affiliate-container">{error}</div>;
   return <Partner
     partner={partner}
     stores={stores}

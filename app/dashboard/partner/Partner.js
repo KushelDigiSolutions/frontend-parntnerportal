@@ -155,7 +155,6 @@ export default function Partner({
           {partner.name || "Unknown"}
         </h2>
       </div>
-
       {/* Partner Details */}
       <div className="details-card">
         <h3 className="section-title">Partner Details</h3>
@@ -200,200 +199,224 @@ export default function Partner({
       </div>
 
       {/* Stores Section */}
-      {stores.length > 0 && (
-        <div className="details-card">
-          <div
+
+      <div className="details-card">
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            marginBottom: 16,
+            borderBottom: "1px solid #f0f0f0",
+          }}
+        >
+          <h3 className="section-title" style={{ margin: 0, border: "none" }}>
+            Stores
+          </h3>
+          <button
             style={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between",
-              marginBottom: 16,
-              borderBottom: "1px solid #f0f0f0",
+              padding: "6px 16px",
+              background: "#4f46e5",
+              color: "#fff",
+              border: "none",
+              borderRadius: 4,
+              fontWeight: "bold",
+              cursor: "pointer",
+              fontSize: "1rem",
             }}
+            onClick={() => setShowAddModal(true)}
           >
-            <h3 className="section-title" style={{ margin: 0, border: "none" }}>
-              Stores
-            </h3>
-            <button
-              style={{
-                padding: "6px 16px",
-                background: "#4f46e5",
-                color: "#fff",
-                border: "none",
-                borderRadius: 4,
-                fontWeight: "bold",
-                cursor: "pointer",
-                fontSize: "1rem",
-              }}
-              onClick={() => setShowAddModal(true)}
-            >
-              Add Store
-            </button>
-          </div>
+            Add Store
+          </button>
+        </div>
 
-          {/* Add/Update Modal */}
-          {showAddModal && (
-            <div style={modalOverlayStyle}>
-              <div style={modalBoxStyle}>
-                <button
-                  style={closeBtnStyle}
-                  onClick={() => {
-                    setShowAddModal(false);
-                    setNewStore({});
-                    setEditStore(false);
-                  }}
-                  title="Close"
-                >
-                  ×
-                </button>
-                <h3
-                  style={{
-                    marginTop: 0,
-                    marginBottom: 18,
-                    fontWeight: 600,
-                    fontSize: 18,
-                  }}
-                >
-                  {editStore ? "Update Store" : "Add Store"}
-                </h3>
-                <form
-                  onSubmit={async (e) => {
-                    e.preventDefault();
-                    if (editStore) {
-                      await onUpdateStore(
-                        editStore.id,
-                        newStore,
-                        () =>
-                          setNewStore({
-                            store_name: "",
-                            platform: "",
-                            commission: "",
-                            total_value: "",
-                          }),
-                        () => setShowAddModal(false)
-                      );
-                      setEditStore(null);
-                    } else {
-                      await handleAddStoreSubmit(e);
-                    }
-                  }}
-                >
-                  <div style={{ marginBottom: 14 }}>
-                    <label style={{ display: "block", fontWeight: 500, marginBottom: 4 }}>Store Name</label>
-                    <input name="store_name" value={newStore.store_name} onChange={handleAddStoreChange} required style={{ width: "100%", padding: 8, borderRadius: 4, border: "1px solid #ccc" }} />
-                  </div>
-                  <div style={{ marginBottom: 14 }}>
-                    <label style={{ display: "block", fontWeight: 500, marginBottom: 4 }}>Platform</label>
-                    <input name="platform" value={newStore.platform} onChange={handleAddStoreChange} required style={{ width: "100%", padding: 8, borderRadius: 4, border: "1px solid #ccc" }} placeholder="shopify, woocommerce, etc." />
-                  </div>
-                  <div style={{ marginBottom: 14 }}>
-                    <label style={{ display: "block", fontWeight: 500, marginBottom: 4 }}>Commission (%)</label>
-                    <input name="commission" value={newStore.commission} onChange={handleAddStoreChange} required type="number" min="0" max="100" style={{ width: "100%", padding: 8, borderRadius: 4, border: "1px solid #ccc" }} placeholder="e.g. 75" />
-                  </div>
-                  <div style={{ marginBottom: 18 }}>
-                    <label style={{ display: "block", fontWeight: 500, marginBottom: 4 }}>Total Value</label>
-                    <input name="total_value" value={newStore.total_value} onChange={handleAddStoreChange} required type="number" min="0" step="0.01" style={{ width: "100%", padding: 8, borderRadius: 4, border: "1px solid #ccc" }} placeholder="e.g. 1200.00" />
-                  </div>
-                  <button type="submit" style={{ background: "#4f46e5", color: "#fff", border: "none", borderRadius: 4, padding: "8px 20px", fontWeight: 600, fontSize: 16, cursor: "pointer", width: "100%" }}>{editStore ? "Update Store" : "Add Store"}</button>
-                </form>
-              </div>
+        {/* Add/Update Modal */}
+        {showAddModal && (
+          <div style={modalOverlayStyle}>
+            <div style={modalBoxStyle}>
+              <button
+                style={closeBtnStyle}
+                onClick={() => {
+                  setShowAddModal(false);
+                  setNewStore({});
+                  setEditStore(false);
+                }}
+                title="Close"
+              >
+                ×
+              </button>
+              <h3
+                style={{
+                  marginTop: 0,
+                  marginBottom: 18,
+                  fontWeight: 600,
+                  fontSize: 18,
+                }}
+              >
+                {editStore ? "Update Store" : "Add Store"}
+              </h3>
+              <form
+                onSubmit={async (e) => {
+                  e.preventDefault();
+                  if (editStore) {
+                    await onUpdateStore(
+                      editStore.id,
+                      newStore,
+                      () =>
+                        setNewStore({
+                          store_name: "",
+                          platform: "",
+                          commission: "",
+                          total_value: "",
+                        }),
+                      () => setShowAddModal(false)
+                    );
+                    setEditStore(null);
+                  } else {
+                    await handleAddStoreSubmit(e);
+                  }
+                }}
+              >
+                <div style={{ marginBottom: 14 }}>
+                  <label style={{ display: "block", fontWeight: 500, marginBottom: 4 }}>Store Name</label>
+                  <input name="store_name" value={newStore.store_name} onChange={handleAddStoreChange} required style={{ width: "100%", padding: 8, borderRadius: 4, border: "1px solid #ccc" }} />
+                </div>
+                <div style={{ marginBottom: 14 }}>
+                  <label style={{ display: "block", fontWeight: 500, marginBottom: 4 }}>Platform</label>
+                  <input name="platform" value={newStore.platform} onChange={handleAddStoreChange} required style={{ width: "100%", padding: 8, borderRadius: 4, border: "1px solid #ccc" }} placeholder="shopify, woocommerce, etc." />
+                </div>
+                <div style={{ marginBottom: 14 }}>
+                  <label style={{ display: "block", fontWeight: 500, marginBottom: 4 }}>Commission (%)</label>
+                  <input name="commission" value={newStore.commission} onChange={handleAddStoreChange} required type="number" min="0" max="100" style={{ width: "100%", padding: 8, borderRadius: 4, border: "1px solid #ccc" }} placeholder="e.g. 75" />
+                </div>
+                <div style={{ marginBottom: 18 }}>
+                  <label style={{ display: "block", fontWeight: 500, marginBottom: 4 }}>Total Value</label>
+                  <input name="total_value" value={newStore.total_value} onChange={handleAddStoreChange} required type="number" min="0" step="0.01" style={{ width: "100%", padding: 8, borderRadius: 4, border: "1px solid #ccc" }} placeholder="e.g. 1200.00" />
+                </div>
+                <button type="submit" style={{ background: "#4f46e5", color: "#fff", border: "none", borderRadius: 4, padding: "8px 20px", fontWeight: 600, fontSize: 16, cursor: "pointer", width: "100%" }}>{editStore ? "Update Store" : "Add Store"}</button>
+              </form>
             </div>
-          )}
+          </div>
+        )}
 
-          {/* Stores Table */}
-          <div className="table-container">
-            <table>
-              <thead>
-                <tr>
-                  <th>#</th>
-                  <th>Store Name</th>
-                  <th>Platform</th>
-                  <th>Earning</th>
-                  <th>Total Value</th>
-                  <th>Status</th>
-                  <th>Created At</th>
-                  <th>Action</th>
-                </tr>
-              </thead>
-              <tbody>
-                {currentStores.length > 0 ? (
-                  currentStores.map((store, idx) => (
-                    <tr key={store.id}>
-                      <td>{startIndex + idx + 1}</td>
-                      <td>{store.store_name}</td>
-                      <td className="capitalize">{store.platform}</td>
-                      <td>{Math.floor(store.earning)}</td>
-                      <td>{Math.floor(store.total_value)}</td>
-                      <td className="capitalize">
-                        <span className={`status ${store.status?.toLowerCase()}`}>
-                          {store.status}
-                        </span>
-                      </td>
-                      <td>
-                        {store.created_at
-                          ? new Date(store.created_at).toLocaleDateString()
-                          : ""}
-                      </td>
-                      <td>
-                        <div
-                          style={{ position: "relative", display: "inline-block" }}
-                          ref={(el) => (dropdownRefs.current[store.id] = el)}
+        {/* Stores Table */}
+        <div className="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Store Name</th>
+                <th>Platform</th>
+                <th>Earning</th>
+                <th>Total Value</th>
+                <th>Status</th>
+                <th>Created At</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              {currentStores.length > 0 ? (
+                currentStores.map((store, idx) => (
+                  <tr key={store.id}>
+                    <td>{startIndex + idx + 1}</td>
+                    <td>{store.store_name}</td>
+                    <td className="capitalize">{store.platform}</td>
+                    <td>{Math.floor(store.earning)}</td>
+                    <td>{Math.floor(store.total_value)}</td>
+                    <td className="capitalize">
+                      <span className={`status ${store.status?.toLowerCase()}`}>
+                        {store.status}
+                      </span>
+                    </td>
+                    <td>
+                      {store.created_at
+                        ? new Date(store.created_at).toLocaleDateString()
+                        : ""}
+                    </td>
+                    <td>
+                      <div
+                        style={{ position: "relative", display: "inline-block" }}
+                        ref={(el) => (dropdownRefs.current[store.id] = el)}
+                      >
+                        <button
+                          style={{
+                            borderRadius: 4,
+                            background: "#fff",
+                            padding: 4,
+                            display: "flex",
+                            alignItems: "center",
+                            gap: 8,
+                            border: "none",
+                            cursor: "pointer",
+                          }}
+                          onClick={() => setDropdownOpen(store.id)}
+                          type="button"
                         >
-                          <button
+                          <BsThreeDotsVertical
+                            style={{ color: "#4f46e5", fontSize: 18, marginRight: 4 }}
+                          />
+                        </button>
+                        {dropdownOpen === store.id && (
+                          <div
                             style={{
-                              borderRadius: 4,
+                              position: "absolute",
+                              top: "110%",
+                              right: 0,
                               background: "#fff",
-                              padding: 4,
-                              display: "flex",
-                              alignItems: "center",
-                              gap: 8,
-                              border: "none",
-                              cursor: "pointer",
+                              border: "1px solid #eee",
+                              borderRadius: 6,
+                              boxShadow: "0 2px 8px rgba(0,0,0,0.12)",
+                              minWidth: 140,
+                              zIndex: 1000,
                             }}
-                            onClick={() => setDropdownOpen(store.id)}
-                            type="button"
                           >
-                            <BsThreeDotsVertical
-                              style={{ color: "#4f46e5", fontSize: 18, marginRight: 4 }}
-                            />
-                          </button>
-                          {dropdownOpen === store.id && (
-                            <div
-                              style={{
-                                position: "absolute",
-                                top: "110%",
-                                right: 0,
-                                background: "#fff",
-                                border: "1px solid #eee",
-                                borderRadius: 6,
-                                boxShadow: "0 2px 8px rgba(0,0,0,0.12)",
-                                minWidth: 140,
-                                zIndex: 1000,
+                            <button
+                              style={dropdownItemStyle}
+                              onClick={() => {
+                                setDropdownOpen(null);
+                                window.location.href = `/dashboard/partner/store/${store.id}`;
                               }}
                             >
-                              <button
-                                style={dropdownItemStyle}
-                                onClick={() => {
-                                  setDropdownOpen(null);
-                                  window.location.href = `/dashboard/partner/store/${store.id}`;
-                                }}
+                              <FiEye style={{ marginRight: 8 }} /> View
+                            </button>
+                            <button
+                              style={dropdownItemStyle}
+                              onClick={() => {
+                                setDropdownOpen(null);
+                                setEditStore(store);
+                                setNewStore({
+                                  store_name: store.store_name || "",
+                                  platform: store.platform || "",
+                                  commission:
+                                    (store.earning / store.total_value) * 100 || "",
+                                  earning: Math.floor(store.earning),
+                                  total_value: Math.floor(store.total_value) || "",
+                                });
+                                setShowAddModal(true);
+                              }}
+                            >
+                              <svg
+                                style={{ marginRight: 8 }}
+                                width="18"
+                                height="18"
+                                fill="none"
+                                stroke="#4f46e5"
+                                strokeWidth="2"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                viewBox="0 0 24 24"
                               >
-                                <FiEye style={{ marginRight: 8 }} /> View
-                              </button>
+                                <path d="M12 20h9" />
+                                <path d="M16.5 3.5a2.121 2.121 0 1 1 3 3L7 19.5 3 21l1.5-4L16.5 3.5z" />
+                              </svg>{" "}
+                              Update
+                            </button>
+                            {store.status?.toLowerCase() === "active" ? (
                               <button
                                 style={dropdownItemStyle}
                                 onClick={() => {
+                                  onUpdateStatus(store.id, "inactive");
                                   setDropdownOpen(null);
-                                  setEditStore(store);
-                                  setNewStore({
-                                    store_name: store.store_name || "",
-                                    platform: store.platform || "",
-                                    commission:
-                                      (store.earning / store.total_value) * 100 || "",
-                                    earning: Math.floor(store.earning),
-                                    total_value: Math.floor(store.total_value) || "",
-                                  });
-                                  setShowAddModal(true);
                                 }}
                               >
                                 <svg
@@ -401,111 +424,87 @@ export default function Partner({
                                   width="18"
                                   height="18"
                                   fill="none"
-                                  stroke="#4f46e5"
+                                  stroke="#ef4444"
                                   strokeWidth="2"
                                   strokeLinecap="round"
                                   strokeLinejoin="round"
                                   viewBox="0 0 24 24"
                                 >
-                                  <path d="M12 20h9" />
-                                  <path d="M16.5 3.5a2.121 2.121 0 1 1 3 3L7 19.5 3 21l1.5-4L16.5 3.5z" />
+                                  <circle cx="12" cy="12" r="10" />
+                                  <path d="M15 9l-6 6M9 9l6 6" />
                                 </svg>{" "}
-                                Update
+                                Deactivate
                               </button>
-                              {store.status?.toLowerCase() === "active" ? (
-                                <button
-                                  style={dropdownItemStyle}
-                                  onClick={() => {
-                                    onUpdateStatus(store.id, "inactive");
-                                    setDropdownOpen(null);
-                                  }}
+                            ) : (
+                              <button
+                                style={dropdownItemStyle}
+                                onClick={() => {
+                                  onUpdateStatus(store.id, "active");
+                                  setDropdownOpen(null);
+                                }}
+                              >
+                                <svg
+                                  style={{ marginRight: 8 }}
+                                  width="18"
+                                  height="18"
+                                  fill="none"
+                                  stroke="#22c55e"
+                                  strokeWidth="2"
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  viewBox="0 0 24 24"
                                 >
-                                  <svg
-                                    style={{ marginRight: 8 }}
-                                    width="18"
-                                    height="18"
-                                    fill="none"
-                                    stroke="#ef4444"
-                                    strokeWidth="2"
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    viewBox="0 0 24 24"
-                                  >
-                                    <circle cx="12" cy="12" r="10" />
-                                    <path d="M15 9l-6 6M9 9l6 6" />
-                                  </svg>{" "}
-                                  Deactivate
-                                </button>
-                              ) : (
-                                <button
-                                  style={dropdownItemStyle}
-                                  onClick={() => {
-                                    onUpdateStatus(store.id, "active");
-                                    setDropdownOpen(null);
-                                  }}
-                                >
-                                  <svg
-                                    style={{ marginRight: 8 }}
-                                    width="18"
-                                    height="18"
-                                    fill="none"
-                                    stroke="#22c55e"
-                                    strokeWidth="2"
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    viewBox="0 0 24 24"
-                                  >
-                                    <circle cx="12" cy="12" r="10" />
-                                    <path d="M9 12l2 2 4-4" />
-                                  </svg>{" "}
-                                  Activate
-                                </button>
-                              )}
-                            </div>
-                          )}
-                        </div>
-                      </td>
-                    </tr>
-                  ))
-                ) : (
-                  <tr>
-                    <td colSpan="8" className="no-items">
-                      No stores
+                                  <circle cx="12" cy="12" r="10" />
+                                  <path d="M9 12l2 2 4-4" />
+                                </svg>{" "}
+                                Activate
+                              </button>
+                            )}
+                          </div>
+                        )}
+                      </div>
                     </td>
                   </tr>
-                )}
-              </tbody>
-            </table>
-          </div>
-
-          {/* Pagination */}
-          {stores.length > 0 && (
-            <div className="pagination">
-              <button
-                onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
-                disabled={currentPage === 1}
-              >
-                « Prev
-              </button>
-              {Array.from({ length: totalPages }, (_, i) => (
-                <button
-                  key={i + 1}
-                  className={currentPage === i + 1 ? "active" : ""}
-                  onClick={() => setCurrentPage(i + 1)}
-                >
-                  {i + 1}
-                </button>
-              ))}
-              <button
-                onClick={() => setCurrentPage((p) => Math.min(p + 1, totalPages))}
-                disabled={currentPage === totalPages}
-              >
-                Next »
-              </button>
-            </div>
-          )}
+                ))
+              ) : (
+                <tr>
+                  <td colSpan="8" className="no-items">
+                    No stores
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
         </div>
-      )}
+
+        {/* Pagination */}
+        {stores.length > 4 && (
+          <div className="pagination">
+            <button
+              onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
+              disabled={currentPage === 1}
+            >
+              « Prev
+            </button>
+            {Array.from({ length: totalPages }, (_, i) => (
+              <button
+                key={i + 1}
+                className={currentPage === i + 1 ? "active" : ""}
+                onClick={() => setCurrentPage(i + 1)}
+              >
+                {i + 1}
+              </button>
+            ))}
+            <button
+              onClick={() => setCurrentPage((p) => Math.min(p + 1, totalPages))}
+              disabled={currentPage === totalPages}
+            >
+              Next »
+            </button>
+          </div>
+        )}
+      </div>
+
     </div>
   );
 }

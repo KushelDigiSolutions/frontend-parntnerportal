@@ -119,7 +119,10 @@ export default function PartnerDetailsPage() {
                 <h3 className="section-title">Store Details</h3>
                 <div className="details-grid">
                     <div>
-                        <span>Name:</span> {store.store_name}
+                        <span>Store Name:</span> {store.store_name}
+                    </div>
+                    <div>
+                        <span>Store Owner:</span> {store.store_owner}
                     </div>
                     <div>
                         <span>Platform:</span> {store.platform}
@@ -142,9 +145,9 @@ export default function PartnerDetailsPage() {
                             ? new Date(store.created_at).toLocaleDateString()
                             : ""}
                     </div>
-                    {/* <div>
-            <span>Commission:</span> {comm}%
-          </div> */}
+                    <div>
+                        <span>Commission:</span> {comm}%
+                    </div>
                 </div>
             </div>
 
@@ -176,10 +179,10 @@ export default function PartnerDetailsPage() {
                                     .map((payment, idx) => (
                                         <tr key={payment.id}>
                                             <td>{(currentPage - 1) * itemsPerPage + idx + 1}</td>
-                                            <td>{Math.floor(payment.amount)}</td>
+                                            <td>{Math.floor(payment?.amount)}</td>
                                             <td>
                                                 {payment.created_at
-                                                    ? new Date(payment.created_at).toLocaleDateString()
+                                                    ? new Date(payment?.created_at).toLocaleDateString()
                                                     : ""}
                                             </td>
                                             <td>

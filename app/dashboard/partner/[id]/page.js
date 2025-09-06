@@ -67,6 +67,7 @@ export default function PartnerPage() {
     const earning = ((commissionNum / 100) * totalValueNum).toFixed(2);
     const payload = {
       partner_id: partner?.id,
+      store_owner:formData?.store_owner,
       store_name: formData.store_name,
       platform: formData.platform,
       total_value: totalValueNum,
@@ -126,7 +127,7 @@ export default function PartnerPage() {
 
       const data = await res.json();
       if (res.ok && data.success) {
-          const storeRes = await fetch(
+        const storeRes = await fetch(
           `https://partnerback.kdscrm.com/partner-store/partner/${partner.id}`,
           {
             method: "GET",
@@ -153,16 +154,22 @@ export default function PartnerPage() {
     }
   }
 
-  const updateStatus = async (storeId, status) => {
+  const updateStatus = async (storeId, status, reason = null) => {
     try {
       const token = localStorage.getItem("user_token");
+
+      const requestBody = { status };
+      if (status === "inactive" && reason) {
+        requestBody.inactive_reason = reason;
+      }
+
       const res = await fetch(`https://partnerback.kdscrm.com/partner-store/${storeId}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({ status }),
+        body: JSON.stringify(requestBody),
       });
 
       const data = await res.json();

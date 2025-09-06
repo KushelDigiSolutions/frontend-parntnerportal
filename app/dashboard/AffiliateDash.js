@@ -2,6 +2,8 @@
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { FiEye } from "react-icons/fi";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import "./AffiliateDash.css";
 
 export default function AffiliateDash() {
@@ -16,14 +18,16 @@ export default function AffiliateDash() {
   // role & partnerId from localStorage
   let role = "partner";
   let partnerId = null;
+  let referenceLink = "";
   try {
     const user = localStorage.getItem("user_data");
     if (user) {
       const userObj = JSON.parse(user);
-      if (userObj?.role) role = userObj.role;
-      if (userObj?.id) partnerId = userObj.id; // 👈 partner id from user_data
+      role = userObj?.role ?? role;
+      partnerId = userObj?.id ?? null;
+      referenceLink = userObj?.refernceLink ?? "";
     }
-  } catch { }
+  } catch {}
 
   useEffect(() => {
     async function fetchData() {
@@ -32,7 +36,6 @@ export default function AffiliateDash() {
       setError("");
       try {
         if (role === "admin") {
-          // Admin → Partners API
           const res = await fetch(
             "https://partnerback.kdscrm.com/partner/getAllPartners",
             {
@@ -44,10 +47,10 @@ export default function AffiliateDash() {
             }
           );
           const data = await res.json();
-          if (res.ok && data.success) {
-            setPartners(data?.data || []);
+          if (res.ok && data?.success) {
+            setPartners(data?.data ?? []);
           } else {
-            setError(data.message || "Failed to fetch partners");
+            setError(data?.message ?? "Failed to fetch partners");
           }
         } else if (role === "partner" && partnerId) {
           const res = await fetch(
@@ -61,10 +64,10 @@ export default function AffiliateDash() {
             }
           );
           const data = await res.json();
-          if (res.ok && data.success) {
-            setStores(Array.isArray(data.data) ? data.data : [data.data]);
+          if (res.ok && data?.success) {
+            setStores(Array.isArray(data?.data) ? data?.data : [data?.data]);
           } else {
-            setError(data.message || "Failed to fetch stores");
+            setError(data?.message ?? "Failed to fetch stores");
           }
         }
       } catch (err) {
@@ -75,31 +78,52 @@ export default function AffiliateDash() {
     fetchData();
   }, [role, partnerId]);
 
-  // Data based on role
+  // ✅ copy referral link + show toast with link
+  const handleCopyReferral = () => {
+    if (referenceLink) {
+      navigator?.clipboard?.writeText(referenceLink).then(() => {
+        toast.success(<div>Referral link copied!</div>);
+      });
+    } else {
+      toast.error("Referral link not found!");
+    }
+  };
+
+  // Table data + pagination logic
   const tableData =
     role === "admin"
-      ? Array.isArray(partners) ? partners.filter((p) => p.status?.toLowerCase() === "approved") : []
-      : Array.isArray(stores) ? stores : [];
+      ? Array.isArray(partners)
+        ? partners?.filter((p) => p?.status?.toLowerCase() === "approved")
+        : []
+      : Array.isArray(stores)
+      ? stores
+      : [];
 
-
-  // Pagination logic
-  const totalPages = Math.ceil(tableData.length / itemsPerPage);
+  const totalPages = Math.ceil(tableData?.length / itemsPerPage) ?? 1;
   const startIndex = (currentPage - 1) * itemsPerPage;
-  const currentData = tableData.slice(startIndex, startIndex + itemsPerPage);
+  const currentData = tableData?.slice(startIndex, startIndex + itemsPerPage) ?? [];
 
   return (
     <div className="affiliate-container">
       {/* Header */}
-      {role === "admin" ? (
-        <div className="header">
-          <h2>Dashboard</h2>
-        </div>
-      ) : (
-        <div className="header">
-          <h2>Dashboard</h2>
-          <button className="refer-btn">Refer New Client</button>
-        </div>
-      )}
+      <div className="header">
+        <h2>Dashboard</h2>
+        {role === "partner" && (
+          <button className="refer-btn" onClick={handleCopyReferral}>
+            Refer New Client
+          </button>
+        )}
+      </div>
+
+      <ToastContainer
+        position="top-center"
+        autoClose={3000}
+        hideProgressBar={false}
+        newestOnTop
+        closeOnClick
+        pauseOnHover
+        theme="colored"
+      />
 
       {/* Stats */}
       <div className="stats">
@@ -107,25 +131,41 @@ export default function AffiliateDash() {
           <>
             <div className="stats-box earnings">
               <p>All time earnings</p>
-              {/* <h3>{stores[0]?.earning || 0}</h3> */}
+              <h3>
+                {stores?.reduce(
+                  (total, store) => total + (Number(Math.floor(store?.earning)) || 0),
+                  0
+                )}
+              </h3>
             </div>
             <div className="stats-box month">
               <p>Total Store Value</p>
-              {/* <h3>{stores[0]?.total_value || 0}</h3> */}
+              <h3>
+                {stores
+                  ?.filter((store) => store?.status?.toLowerCase() === "active")
+                  ?.reduce(
+                    (total, store) => total + (Number(Math.floor(store?.earning)) || 0),
+                    0
+                  )}
+              </h3>
             </div>
           </>
         ) : (
           <>
             <div className="stats-box partner">
               <p>Partner</p>
-              <h3>{partners.filter((p) => p.status?.toLowerCase() === "approved").length}</h3>
+              <h3>
+                {partners?.filter((p) => p?.status?.toLowerCase() === "approved")?.length ?? 0}
+              </h3>
             </div>
             <div
               className="stats-box request cursor-pointer"
               onClick={() => router.push("partner-request")}
             >
               <p>Request</p>
-              <h3>{partners.filter((p) => p.status?.toLowerCase() === "pending").length}</h3>
+              <h3>
+                {partners?.filter((p) => p?.status?.toLowerCase() === "pending")?.length ?? 0}
+              </h3>
             </div>
           </>
         )}
@@ -134,7 +174,6 @@ export default function AffiliateDash() {
       {/* Table */}
       <div className="table-container">
         {role === "admin" ? (
-          // ✅ Admin Table
           <table>
             <thead>
               <tr>
@@ -153,18 +192,26 @@ export default function AffiliateDash() {
             </thead>
             <tbody>
               {loading ? (
-                <tr><td colSpan="11" className="no-items">Loading...</td></tr>
+                <tr>
+                  <td colSpan="11" className="no-items">
+                    Loading...
+                  </td>
+                </tr>
               ) : error ? (
-                <tr><td colSpan="11" className="no-items">{error}</td></tr>
-              ) : currentData.length > 0 ? (
-                currentData.map((item, index) => (
-                  <tr key={item.id}>
-                    <td>{startIndex + index + 1}</td> {/* ✅ S.No */}
+                <tr>
+                  <td colSpan="11" className="no-items">
+                    {error}
+                  </td>
+                </tr>
+              ) : currentData?.length > 0 ? (
+                currentData?.map((item, index) => (
+                  <tr key={item?.id}>
+                    <td>{startIndex + index + 1}</td>
                     <td>
-                      {item.profileImage ? (
+                      {item?.profileImage ? (
                         <img
-                          src={item.profileImage}
-                          alt={item.name}
+                          src={item?.profileImage}
+                          alt={item?.name}
                           style={{ width: 32, height: 32, borderRadius: "50%" }}
                         />
                       ) : (
@@ -179,26 +226,22 @@ export default function AffiliateDash() {
                             lineHeight: "32px",
                           }}
                         >
-                          {item.name?.[0]?.toUpperCase() || "?"}
+                          {item?.name?.[0]?.toUpperCase() ?? "?"}
                         </span>
                       )}
                     </td>
-                    <td>{item.name}</td>
-                    <td>{item.email}</td>
-                    <td>{item.mobilePhone}</td>
-                    <td className="capitalize">{item.platform}</td>
-                    <td>{item.affiliate_handle}</td>
+                    <td>{item?.name}</td>
+                    <td>{item?.email}</td>
+                    <td>{item?.mobilePhone}</td>
+                    <td className="capitalize">{item?.platform}</td>
+                    <td>{item?.affiliate_handle}</td>
                     <td className="capitalize">
-                      <span className={`status text-green-700  ${item.status?.toLowerCase()}`}>
-                        {item.status}
+                      <span className={`status text-green-700  ${item?.status?.toLowerCase()}`}>
+                        {item?.status}
                       </span>
                     </td>
-                    <td>{item.refernceLink}</td>
-                    <td>
-                      {item.created_at
-                        ? new Date(item.created_at).toLocaleDateString()
-                        : ""}
-                    </td>
+                    <td>{item?.refernceLink}</td>
+                    <td>{item?.created_at ? new Date(item?.created_at)?.toLocaleDateString() : ""}</td>
                     <td>
                       <button
                         style={{
@@ -210,7 +253,7 @@ export default function AffiliateDash() {
                           gap: 8,
                           cursor: "pointer",
                         }}
-                        onClick={() => router.push(`/dashboard/partner/${item.id}`)}
+                        onClick={() => router.push(`/dashboard/partner/${item?.id}`)}
                       >
                         <FiEye style={{ color: "#4f46e5", fontSize: 18, marginRight: 4 }} />
                       </button>
@@ -218,39 +261,51 @@ export default function AffiliateDash() {
                   </tr>
                 ))
               ) : (
-                <tr><td colSpan="11" className="no-items">No items</td></tr>
+                <tr>
+                  <td colSpan="11" className="no-items">
+                    No items
+                  </td>
+                </tr>
               )}
             </tbody>
           </table>
         ) : (
-          // ✅ Partner Store Table
           <table>
             <thead>
               <tr>
                 <th>#</th>
                 <th>Store Name</th>
+                <th>Store Owner</th>
                 <th>Platform</th>
                 <th>Earning</th>
                 <th>Total Value</th>
                 <th>Status</th>
                 <th>Created At</th>
-                {/* <th>End Date</th> */}
                 <th>Action</th>
               </tr>
             </thead>
             <tbody>
               {loading ? (
-                <tr><td colSpan="9" className="no-items">Loading...</td></tr>
+                <tr>
+                  <td colSpan="9" className="no-items">
+                    Loading...
+                  </td>
+                </tr>
               ) : error ? (
-                <tr><td colSpan="9" className="no-items">{error}</td></tr>
-              ) : currentData.length > 0 ? (
-                currentData.map((store, index) => (
-                  <tr key={store.partner_id}>
+                <tr>
+                  <td colSpan="9" className="no-items">
+                    {error}
+                  </td>
+                </tr>
+              ) : currentData?.length > 0 ? (
+                currentData?.map((store, index) => (
+                  <tr key={store?.partner_id}>
                     <td>{startIndex + index + 1}</td>
-                    <td>{store.store_name}</td>
-                    <td className="capitalize">{store.platform}</td>
-                    <td>{Math.floor(store.earning)}</td>
-                    <td>{Math.floor(store.total_value)}</td>
+                    <td>{store?.store_name}</td>
+                    <td>{store?.store_owner || '-'}</td>
+                    <td className="capitalize">{store?.platform}</td>
+                    <td>{Math.floor(store?.earning ?? 0)}</td>
+                    <td>{Math.floor(store?.total_value ?? 0)}</td>
                     <td className="capitalize">
                       <span
                         style={{
@@ -260,25 +315,17 @@ export default function AffiliateDash() {
                           fontSize: 11,
                           color: "#fff",
                           background:
-                            store.status?.toLowerCase() === "active"
-                              ? "rgb(34 197 94)" // ✅ green
-                              : "rgb(239 68 68)", // ✅ red
+                            store?.status?.toLowerCase() === "active"
+                              ? "rgb(34 197 94)"
+                              : "rgb(239 68 68)",
                         }}
                       >
-                        {store.status}
+                        {store?.status}
                       </span>
                     </td>
-
                     <td>
-                      {store.created_at
-                        ? new Date(store.created_at).toLocaleDateString()
-                        : "-"}
+                      {store?.created_at ? new Date(store?.created_at)?.toLocaleDateString() : "-"}
                     </td>
-                    {/* <td>
-                      {store.end_date
-                        ? new Date(store.end_date).toLocaleDateString()
-                        : "-"}
-                    </td> */}
                     <td>
                       <button
                         style={{
@@ -294,25 +341,25 @@ export default function AffiliateDash() {
                           router.push(`/dashboard/partner/store-detail/${store?.id}`)
                         }
                       >
-                        <FiEye
-                          style={{ color: "#4f46e5", fontSize: 18, marginRight: 4 }}
-                        />
+                        <FiEye style={{ color: "#4f46e5", fontSize: 18, marginRight: 4 }} />
                       </button>
                     </td>
                   </tr>
                 ))
               ) : (
-                <tr><td colSpan="9" className="no-items">No stores found</td></tr>
+                <tr>
+                  <td colSpan="9" className="no-items">
+                    No stores found
+                  </td>
+                </tr>
               )}
             </tbody>
           </table>
-
-
         )}
       </div>
 
       {/* Pagination */}
-      {tableData.length > 0 && (
+      {tableData?.length > 0 && (
         <div className="pagination">
           <button
             onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
@@ -320,7 +367,7 @@ export default function AffiliateDash() {
           >
             « Prev
           </button>
-          {Array.from({ length: totalPages }, (_, i) => (
+          {Array.from({ length: totalPages ?? 1 }, (_, i) => (
             <button
               key={i + 1}
               className={currentPage === i + 1 ? "active" : ""}
@@ -333,7 +380,7 @@ export default function AffiliateDash() {
             onClick={() => setCurrentPage((p) => Math.min(p + 1, totalPages))}
             disabled={currentPage === totalPages}
           >
-            Next »
+            Next » 
           </button>
         </div>
       )}

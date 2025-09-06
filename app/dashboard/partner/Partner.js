@@ -24,7 +24,7 @@ const modalBoxStyle = {
   background: "#fff",
   borderRadius: 8,
   padding: 32,
-  minWidth: 380,
+  minWidth: 480,
   maxWidth: 400,
   boxShadow: "0 2px 16px rgba(0,0,0,0.15)",
   position: "relative",
@@ -48,6 +48,9 @@ export default function Partner({
   onUpdateStatus,
 }) {
   const [showAddModal, setShowAddModal] = useState(false);
+  const [showDeactivateModal, setShowDeactivateModal] = useState(false);
+  const [deactivatingStore, setDeactivatingStore] = useState(null);
+  const [deactivationReason, setDeactivationReason] = useState("");
   const [editStore, setEditStore] = useState(null);
   const [newStore, setNewStore] = useState({
     store_name: "",
@@ -65,18 +68,32 @@ export default function Partner({
 
   const handleAddStoreSubmit = async (e) => {
     e.preventDefault();
+    console.log(newStore);
+    
     if (onAddStore) {
       await onAddStore(
         newStore,
         () =>
           setNewStore({
             store_name: "",
+            store_owner: "",
             platform: "",
             commission: "",
             total_value: "",
           }),
         () => setShowAddModal(false)
       );
+    }
+  };
+
+  const handleDeactivateSubmit = async (e) => {
+    e.preventDefault();
+    if (onUpdateStatus && deactivatingStore) {
+      await onUpdateStatus(deactivatingStore.id, "inactive", deactivationReason, );
+      setShowDeactivateModal(false);
+      setDeactivatingStore(null);
+      setDeactivationReason("");
+      setDropdownOpen(null);
     }
   };
 
@@ -282,6 +299,10 @@ export default function Partner({
                   <input name="store_name" value={newStore.store_name} onChange={handleAddStoreChange} required style={{ width: "100%", padding: 8, borderRadius: 4, border: "1px solid #ccc" }} />
                 </div>
                 <div style={{ marginBottom: 14 }}>
+                  <label style={{ display: "block", fontWeight: 500, marginBottom: 4 }}>Store Owner</label>
+                  <input name="store_owner" value={newStore.store_owner} onChange={handleAddStoreChange} required style={{ width: "100%", padding: 8, borderRadius: 4, border: "1px solid #ccc" }} />
+                </div>
+                <div style={{ marginBottom: 14 }}>
                   <label style={{ display: "block", fontWeight: 500, marginBottom: 4 }}>Platform</label>
                   <input name="platform" value={newStore.platform} onChange={handleAddStoreChange} required style={{ width: "100%", padding: 8, borderRadius: 4, border: "1px solid #ccc" }} placeholder="shopify, woocommerce, etc." />
                 </div>
@@ -299,6 +320,97 @@ export default function Partner({
           </div>
         )}
 
+        {/* Deactivation Modal */}
+        {showDeactivateModal && (
+          <div style={modalOverlayStyle}>
+            <div style={modalBoxStyle}>
+              <button
+                style={closeBtnStyle}
+                onClick={() => {
+                  setShowDeactivateModal(false);
+                  setDeactivatingStore(null);
+                  setDeactivationReason("");
+                }}
+                title="Close"
+              >
+                ×
+              </button>
+              <h3
+                style={{
+                  marginTop: 0,
+                  marginBottom: 18,
+                  fontWeight: 600,
+                  fontSize: 18,
+                  color: "#ef4444",
+                }}
+              >
+                Deactivate Store
+              </h3>
+              <p style={{ marginBottom: 16, color: "#666" }}>
+                Are you sure you want to deactivate "{deactivatingStore?.store_name}"? Please provide a reason for deactivation.
+              </p>
+              <form onSubmit={handleDeactivateSubmit}>
+                <div style={{ marginBottom: 18 }}>
+                  <label style={{ display: "block", fontWeight: 500, marginBottom: 6 }}>
+                    Reason for Deactivation <span style={{ color: "#ef4444" }}>*</span>
+                  </label>
+                  <textarea
+                    value={deactivationReason}
+                    onChange={(e) => setDeactivationReason(e.target.value)}
+                    required
+                    rows={4}
+                    style={{
+                      width: "100%",
+                      padding: 10,
+                      borderRadius: 4,
+                      border: "1px solid #ccc",
+                      fontSize: 14,
+                      fontFamily: "inherit",
+                      resize: "vertical",
+                    }}
+                    placeholder="Please explain why this store is being deactivated..."
+                  />
+                </div>
+                <div style={{ display: "flex", gap: 12, justifyContent: "flex-end" }}>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setShowDeactivateModal(false);
+                      setDeactivatingStore(null);
+                      setDeactivationReason("");
+                    }}
+                    style={{
+                      background: "#f3f4f6",
+                      color: "#374151",
+                      border: "none",
+                      borderRadius: 4,
+                      padding: "8px 16px",
+                      fontWeight: 500,
+                      cursor: "pointer",
+                    }}
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    style={{
+                      background: "#ef4444",
+                      color: "#fff",
+                      border: "none",
+                      borderRadius: 4,
+                      padding: "8px 16px",
+                      fontWeight: 600,
+                      cursor: "pointer",
+                    }}
+                  >
+                    Deactivate Store
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        )}
+
         {/* Stores Table */}
         <div className="table-container">
           <table>
@@ -306,6 +418,7 @@ export default function Partner({
               <tr>
                 <th>#</th>
                 <th>Store Name</th>
+                <th>Store Owner</th>
                 <th>Platform</th>
                 <th>Earning</th>
                 <th>Total Value</th>
@@ -319,7 +432,8 @@ export default function Partner({
                 currentStores.map((store, idx) => (
                   <tr key={store.id}>
                     <td>{startIndex + idx + 1}</td>
-                    <td>{store.store_name}</td>
+                    <td>{store?.store_name}</td>
+                    <td>{store?.store_owner || '-'}</td>
                     <td className="capitalize">{store.platform}</td>
                     <td>{Math.floor(store.earning)}</td>
                     <td>{Math.floor(store.total_value)}</td>
@@ -415,7 +529,8 @@ export default function Partner({
                               <button
                                 style={dropdownItemStyle}
                                 onClick={() => {
-                                  onUpdateStatus(store.id, "inactive");
+                                  setDeactivatingStore(store);
+                                  setShowDeactivateModal(true);
                                   setDropdownOpen(null);
                                 }}
                               >

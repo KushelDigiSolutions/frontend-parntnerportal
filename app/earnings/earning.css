@@ -1,0 +1,321 @@
+/* ========================= */
+/* Container & Heading */
+/* ========================= */
+.affiliate-container {
+  min-height: 630px;
+  background: #f9fafb;
+  padding: 30px;
+  display: flex;
+  flex-direction: column;
+}
+
+.partner-heading {
+  font-size: 24px;
+  font-weight: 700;
+  color: #1e293b;
+  margin-bottom: 20px;
+}
+
+/* ========================= */
+/* Date Filter */
+/* ========================= */
+.date-filter {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 20px;
+  gap: 8px;
+}
+
+.filter-label {
+  font-size: 14px;
+  font-weight: 600;
+  color: #374151;
+}
+
+.filter-inputs {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.filter-group input[type="date"] {
+  padding: 8px 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 14px;
+  background: #fff;
+  color: #111827;
+  min-width: 160px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.filter-group input[type="date"]:focus {
+  outline: none;
+  border-color: #4f46e5;
+  box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.15);
+}
+
+.to-text {
+  font-size: 14px;
+  color: #6b7280;
+}
+
+.apply-btn {
+  background: #4f46e5;
+  color: #fff;
+  padding: 8px 14px;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.apply-btn:hover {
+  background: #4338ca;
+}
+
+.clear-btn {
+  background: #f3f4f6;
+  color: #374151;
+  padding: 8px 14px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.clear-btn:hover {
+  background: #e5e7eb;
+}
+
+/* 📱 Responsive */
+@media (max-width: 600px) {
+  .filter-inputs {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .filter-group input[type="date"] {
+    width: 100%;
+  }
+
+  .apply-btn,
+  .clear-btn {
+    width: 100%;
+  }
+}
+
+
+/* ========================= */
+/* Table */
+/* ========================= */
+.table-container {
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 15px;
+  min-width: 600px;
+}
+
+thead {
+  background: #f1f5f9;
+}
+
+th,
+td {
+  padding: 14px 18px;
+  text-align: left;
+  white-space: nowrap;
+}
+
+th {
+  font-weight: 600;
+  color: #374151;
+  border-bottom: 2px solid #e5e7eb;
+}
+
+td {
+  color: #475569;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+tr:hover td {
+  background: #f9fafc;
+}
+
+/* Empty state */
+.no-items {
+  text-align: center;
+  padding: 20px;
+  color: #6b7280;
+}
+
+/* ========================= */
+/* Status Labels */
+/* ========================= */
+.status {
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 500;
+  display: inline-block;
+}
+
+.status.approved {
+  background: #d1fae5;
+  color: #065f46;
+}
+
+.status.pending {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.status.rejected {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+/* ========================= */
+/* Pagination */
+/* ========================= */
+.pagination {
+  margin-top: 16px;
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.page-btn {
+  padding: 6px 12px;
+  border: 1px solid #d1d5db;
+  background: #fff;
+  cursor: pointer;
+  border-radius: 6px;
+  font-size: 14px;
+}
+
+.page-btn:hover {
+  background: #f3f4f6;
+}
+
+.page-btn.active {
+  background: #4f46e5;
+  color: #fff;
+  border-color: #4f46e5;
+}
+
+.page-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ========================= */
+/* Modal */
+/* ========================= */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.65);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 10000;
+}
+
+.modal-card {
+  background: #fff;
+  border-radius: 12px;
+  padding: 24px;
+  width: 420px;
+  max-width: 90%;
+  position: relative;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+}
+
+.modal-card h3 {
+  margin-bottom: 12px;
+  font-size: 20px;
+  font-weight: 600;
+  color: #111827;
+}
+
+.modal-card p {
+  margin-bottom: 8px;
+  font-size: 15px;
+  color: #374151;
+}
+
+/* Buttons inside modal */
+.modal-card button {
+  font-size: 14px;
+  padding: 8px 14px;
+  border-radius: 6px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.modal-card button:hover {
+  opacity: 0.9;
+}
+
+.modal-card .cancel-btn {
+  background: #f3f4f6;
+  border: 1px solid #d1d5db;
+}
+
+.modal-card .delete-btn {
+  background: #ef4444;
+  color: #fff;
+  border: none;
+}
+
+/* ========================= */
+/* Responsive */
+/* ========================= */
+@media (max-width: 768px) {
+  .date-filter {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  th,
+  td {
+    font-size: 13px;
+    padding: 10px 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  .partner-heading {
+    font-size: 18px;
+  }
+
+  .date-filter button {
+    width: 100%;
+  }
+
+  .pagination button {
+    padding: 5px 10px;
+    font-size: 12px;
+  }
+}

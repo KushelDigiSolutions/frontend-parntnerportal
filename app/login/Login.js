@@ -1,7 +1,7 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import { FaGoogle, FaApple } from "react-icons/fa";
-import { FiEye, FiEyeOff } from "react-icons/fi";
+import { FiAlertCircle, FiCheckCircle, FiEye, FiEyeOff } from "react-icons/fi";
 import "./Login.css";
 
 export default function Login() {
@@ -17,6 +17,8 @@ export default function Login() {
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [successMsg, setSuccessMsg] = useState("");
+  const [showNewPassword, setShowNewPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -33,6 +35,7 @@ export default function Login() {
         // Token aur user dono save kar lo
         localStorage.setItem("user_token", data.token);
         localStorage.setItem("user_data", JSON.stringify(data.user));
+        // localStorage.setItem("data",JSON.stringify(data));
 
         // redirect
         window.location.href = "/dashboard";
@@ -189,8 +192,16 @@ export default function Login() {
                 Forgot Password
               </a>
             </div>
-            {error && <div className="error-message">{error}</div>}
-            {successMsg && <div className="success-message">{successMsg}</div>}
+            {error && (
+              <div className="error-message">
+                <FiAlertCircle /> {error}
+              </div>
+            )}
+            {successMsg && (
+              <div className="success-message">
+                <FiCheckCircle /> {successMsg}
+              </div>
+            )}
             <button className="login-btn" type="submit" disabled={loading}>
               {loading ? "Logging in..." : "Log In"}
             </button>
@@ -240,24 +251,42 @@ export default function Login() {
           <form onSubmit={handleResetPassword}>
             <div className="form-group">
               <label>New Password</label>
-              <input
-                type="password"
-                placeholder="Enter new password"
-                required
-                value={newPassword}
-                onChange={(e) => setNewPassword(e.target.value)}
-              />
+              <div className="password-field">
+                <input
+                  type={showNewPassword ? "text" : "password"}
+                  placeholder="Enter new password"
+                  required
+                  value={newPassword}
+                  onChange={(e) => setNewPassword(e.target.value)}
+                />
+                <span
+                  className="toggle-password"
+                  onClick={() => setShowNewPassword(!showNewPassword)}
+                >
+                  {showNewPassword ? <FiEyeOff /> : <FiEye />}
+                </span>
+              </div>
             </div>
+
             <div className="form-group">
               <label>Confirm Password</label>
-              <input
-                type="password"
-                placeholder="Confirm new password"
-                required
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-              />
+              <div className="password-field">
+                <input
+                  type={showConfirmPassword ? "text" : "password"}
+                  placeholder="Confirm new password"
+                  required
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                />
+                <span
+                  className="toggle-password"
+                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                >
+                  {showConfirmPassword ? <FiEyeOff /> : <FiEye />}
+                </span>
+              </div>
             </div>
+
             {error && <div className="error-message">{error}</div>}
             {successMsg && <div className="success-message">{successMsg}</div>}
             <button className="login-btn" type="submit" disabled={loading}>

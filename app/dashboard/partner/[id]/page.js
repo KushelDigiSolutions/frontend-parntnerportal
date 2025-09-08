@@ -108,6 +108,7 @@ export default function PartnerPage() {
 
     const payload = {
       store_name: formData.store_name,
+      store_owner: formData.store_owner,
       platform: formData.platform,
       total_value: totalValueNum,
       // commission: commissionNum,

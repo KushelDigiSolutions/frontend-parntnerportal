@@ -3,8 +3,8 @@
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { IoChevronBackOutline } from "react-icons/io5";
-import "../../../AffiliateDash.css";
-import "../../partner-details.css";
+import "../../../dashboard/AffiliateDash.css";
+import "../../../dashboard/partner/partner-details.css";
 import "./storedetail.css"
 
 export default function PartnerDetailsPage() {

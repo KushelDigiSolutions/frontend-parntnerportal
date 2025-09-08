@@ -359,7 +359,7 @@ export default function AffiliateDash() {
       </div>
 
       {/* Pagination */}
-      {tableData?.length > 0 && (
+      {tableData?.length > 5 && (
         <div className="pagination">
           <button
             onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}

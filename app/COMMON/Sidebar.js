@@ -14,18 +14,18 @@ export default function Sidebar({ open }) {
       const userObj = JSON.parse(user);
       if (userObj?.role) role = userObj.role;
     }
-  } catch {}
+  } catch { }
 
   // Define menu items for each role
   const adminMenu = [
     { name: "Dashboard", icon: "https://res.cloudinary.com/dd9tagtiw/image/upload/v1749203830/saka_i1vg99.svg", link: "/dashboard" },
-    { name: "Partner Request", icon: "https://res.cloudinary.com/dd9tagtiw/image/upload/v1749203830/saka_i1vg99.svg" },
+    { name: "Partner Request", icon: "   https://cdn-icons-png.flaticon.com/512/4458/4458537.png " },
   ];
-  
+
   const partnerMenu = [
     { name: "Dashboard", icon: "https://res.cloudinary.com/dd9tagtiw/image/upload/v1749203830/saka_i1vg99.svg" },
-    { name: "Earnings", icon: "https://res.cloudinary.com/dd9tagtiw/image/upload/v1749203830/saka_i1vg99.svg" },
-    { name: "Deals", icon: "https://res.cloudinary.com/dd9tagtiw/image/upload/v1749203830/saka_i1vg99.svg" },
+    { name: "Earnings", icon: "   https://cdn-icons-png.flaticon.com/512/8028/8028560.png " },
+    { name: "Deals", icon: "https://cdn-icons-png.flaticon.com/512/9091/9091860.png" },
     { name: "Partner Playbook", icon: "https://res.cloudinary.com/dd9tagtiw/image/upload/v1749203830/saka_i1vg99.svg" },
   ];
   const menuItems = role === "admin" ? adminMenu : partnerMenu;

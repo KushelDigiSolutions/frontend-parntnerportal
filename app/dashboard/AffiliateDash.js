@@ -25,9 +25,9 @@ export default function AffiliateDash() {
       const userObj = JSON.parse(user);
       role = userObj?.role ?? role;
       partnerId = userObj?.id ?? null;
-      referenceLink = userObj?.refernceLink ?? "";
+      referenceLink = `http://localhost:3000/?refer=${userObj?.refernceLink}` ?? "";
     }
-  } catch {}
+  } catch { }
 
   useEffect(() => {
     async function fetchData() {
@@ -96,8 +96,8 @@ export default function AffiliateDash() {
         ? partners?.filter((p) => p?.status?.toLowerCase() === "approved")
         : []
       : Array.isArray(stores)
-      ? stores
-      : [];
+        ? stores
+        : [];
 
   const totalPages = Math.ceil(tableData?.length / itemsPerPage) ?? 1;
   const startIndex = (currentPage - 1) * itemsPerPage;
@@ -380,7 +380,7 @@ export default function AffiliateDash() {
             onClick={() => setCurrentPage((p) => Math.min(p + 1, totalPages))}
             disabled={currentPage === totalPages}
           >
-            Next » 
+            Next »
           </button>
         </div>
       )}

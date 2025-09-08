@@ -20,6 +20,8 @@ export default function Sidebar({ open }) {
   const adminMenu = [
     { name: "Dashboard", icon: "https://res.cloudinary.com/dd9tagtiw/image/upload/v1749203830/saka_i1vg99.svg", link: "/dashboard" },
     { name: "Partner Request", icon: "   https://cdn-icons-png.flaticon.com/512/4458/4458537.png " },
+    { name: "Refer Client", icon: "   https://cdn-icons-png.flaticon.com/512/4458/4458537.png " },
+    { name: "Partner Playbook", icon: "https://res.cloudinary.com/dd9tagtiw/image/upload/v1749203830/saka_i1vg99.svg" },
   ];
 
   const partnerMenu = [

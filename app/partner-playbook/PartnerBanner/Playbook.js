@@ -49,30 +49,30 @@ export default function PartnerPlaybook() {
             <span className="tag">Support</span>
           </div>
           <p className="watch-text">
-            Watch this video<br/>
+            Watch this video<br />
             Learn how to unlock your business potential as a KR Customizer Partner
           </p>
         </div>
       </div>
 
       {isOpen && (
-  <div className="modal-overlay" onClick={closeModal}>
-    <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-      <button className="close-btn" onClick={closeModal}>
-        ✖
-      </button>
-      <iframe
-        width="100%"
-        height="100%"
-        src="https://www.youtube.com/embed/Qz-fMS4a_bA?autoplay=1"
-        title="Partner Video"
-        frameBorder="0"
-        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-        allowFullScreen
-      ></iframe>
-    </div>
-  </div>
-)}
+        <div className="modal-overlay" onClick={closeModal}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <button className="close-btn" onClick={closeModal}>
+              ✖
+            </button>
+            <iframe
+              width="100%"
+              height="100%"
+              src="https://www.youtube.com/embed/Qz-fMS4a_bA?autoplay=1"
+              title="Partner Video"
+              frameBorder="0"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+            ></iframe>
+          </div>
+        </div>
+      )}
 
     </div>
   );

@@ -25,7 +25,7 @@ export default function AffiliateDash() {
       const userObj = JSON.parse(user);
       role = userObj?.role ?? role;
       partnerId = userObj?.id ?? null;
-      referenceLink = `http://localhost:3000/?refer=${userObj?.refernceLink}` ?? "";
+      referenceLink = `https://referral-client.vercel.app/?refer=${userObj?.refernceLink}` ?? "";
     }
   } catch { }
 

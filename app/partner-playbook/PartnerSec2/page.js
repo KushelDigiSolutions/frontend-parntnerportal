@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from "react";
 import "./partnersec.css";
 import { FaYoutube } from "react-icons/fa";
-import { FiCopy, FiEye, FiEdit } from "react-icons/fi";
+import { FiCopy, FiEye, FiEdit, FiTrash2 } from "react-icons/fi";
 
 export default function PartnerDashboard() {
     const [items, setItems] = useState([]);
@@ -10,6 +10,7 @@ export default function PartnerDashboard() {
     const [error, setError] = useState("");
     const [showModal, setShowModal] = useState(false);
     const [editingId, setEditingId] = useState(null);
+    const [deleteId, setDeleteId] = useState(null);
     const [videoUrl, setVideoUrl] = useState(""); // 👈 for video popup
     const [formData, setFormData] = useState({
         title: "",
@@ -103,6 +104,29 @@ export default function PartnerDashboard() {
         setEditingId(item?.id);
         setShowModal(true);
     };
+
+    const handleDelete = async () => {
+        try {
+            const token = localStorage.getItem("user_token");
+            const res = await fetch(`https://partnerback.kdscrm.com/api/playbooks/${deleteId}`, {
+                method: "DELETE",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+            const data = await res.json();
+            if (res.ok && data?.success) {
+                setDeleteId(null);
+                fetchItems(); // refresh list
+            } else {
+                alert(data?.message || "Failed to delete item");
+            }
+        } catch {
+            alert("Network error");
+        }
+    };
+
 
     // 👇 Video popup open
     const handleOpenVideo = (url) => {
@@ -204,12 +228,21 @@ export default function PartnerDashboard() {
                                             }
                                         />
                                         {role === "admin" && (
-                                            <FiEdit
-                                                className="action-icon"
-                                                title="Edit"
-                                                onClick={() => handleEdit(item)}
-                                            />
+                                            <>
+                                                <FiEdit
+                                                    className="action-icon"
+                                                    title="Edit"
+                                                    onClick={() => handleEdit(item)}
+                                                />
+                                                <FiTrash2
+                                                    color="red"
+                                                    className="action-icon delete-icon"
+                                                    title="Delete"
+                                                    onClick={() => setDeleteId(item?.id)}
+                                                />
+                                            </>
                                         )}
+
                                     </td>
                                 </tr>
                             ))
@@ -295,6 +328,20 @@ export default function PartnerDashboard() {
                     </div>
                 </div>
             )}
+
+            {deleteId && (
+                <div className="modal-overlay">
+                    <div className="modal">
+                        <h3>Are you sure?</h3>
+                        <p>This action cannot be undone.</p>
+                        <div className="modal-actions">
+                            <button className="delete-btn" onClick={handleDelete}>Delete</button>
+                            <button className="cancel-btn" onClick={() => setDeleteId(null)}>Cancel</button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
         </div>
     );
 }

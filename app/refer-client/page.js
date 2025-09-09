@@ -55,7 +55,7 @@ export default function ReferClient() {
         const token = localStorage.getItem("user_token");
         try {
             const res = await fetch(
-                `https://partnerback.kdscrm.com/api/refral/${id}/status`,
+                `https://partnerback.kdscrm.com/api/refral/${id}`,
                 {
                     method: "PUT",
                     headers: {
@@ -115,7 +115,9 @@ export default function ReferClient() {
                                     <td>{item?.phone || "-"}</td>
                                     <td>{item?.store_name || "-"}</td>
                                     <td>{item?.partner_name || "-"}</td>
-                                    <td>{item?.status || "-"}</td>
+                                    <td>
+                                        <StatusBadge status={item?.status} />
+                                    </td>
                                     <td>
                                         {item?.created_at
                                             ? new Date(item?.created_at)?.toLocaleDateString()
@@ -153,6 +155,42 @@ export default function ReferClient() {
         </div>
     );
 }
+
+function StatusBadge({ status }) {
+    const normalized = status?.toLowerCase(); // 👈 normalize
+
+    let color = "#6b7280"; // default gray
+    let bg = "#f3f4f6";
+
+    if (normalized === "confirmed") {
+        color = "#0f766e"; // green
+        bg = "#d1fae5";
+    } else if (normalized === "hold") {
+        color = "#92400e"; // orange
+        bg = "#fef3c7";
+    } else if (normalized === "failed") {
+        color = "#991b1b"; // red
+        bg = "#fee2e2";
+    }
+
+    return (
+        <span
+            style={{
+                display: "inline-block",
+                padding: "4px 10px",
+                borderRadius: "20px",
+                fontSize: "13px",
+                fontWeight: 600,
+                color,
+                backgroundColor: bg,
+                textTransform: "capitalize",
+            }}
+        >
+            {status || "-"}
+        </span>
+    );
+}
+
 
 /* ---------- Reusable Components ---------- */
 
@@ -210,7 +248,7 @@ function DetailsPopup({ data, onClose }) {
                     <div><b>Mobile:</b> {data?.phone || "-"}</div>
                     <div><b>Store Name:</b> {data?.store_name || "-"}</div>
                     <div><b>Referred By:</b> {data?.partner_name || "-"}</div>
-                    <div><b>Status:</b> {data?.status || "-"}</div>
+                    <div><b>Status:</b> <StatusBadge status={data?.status} /></div>
                     <div style={{ gridColumn: "1/3" }}>
                         <b>Created At:</b>{" "}
                         {data?.created_at

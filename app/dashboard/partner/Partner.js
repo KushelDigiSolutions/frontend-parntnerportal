@@ -54,6 +54,7 @@ export default function Partner({
   const [editStore, setEditStore] = useState(null);
   const [newStore, setNewStore] = useState({
     store_name: "",
+    store_owner: "",
     platform: "",
     commission: "",
     total_value: "",
@@ -69,7 +70,7 @@ export default function Partner({
   const handleAddStoreSubmit = async (e) => {
     e.preventDefault();
     console.log(newStore);
-    
+
     if (onAddStore) {
       await onAddStore(
         newStore,
@@ -89,7 +90,7 @@ export default function Partner({
   const handleDeactivateSubmit = async (e) => {
     e.preventDefault();
     if (onUpdateStatus && deactivatingStore) {
-      await onUpdateStatus(deactivatingStore.id, "inactive", deactivationReason, );
+      await onUpdateStatus(deactivatingStore?.id, "inactive", deactivationReason);
       setShowDeactivateModal(false);
       setDeactivatingStore(null);
       setDeactivationReason("");
@@ -108,7 +109,7 @@ export default function Partner({
   const itemsPerPage = 5;
   const totalPages = Math.ceil((stores?.length || 0) / itemsPerPage) || 1;
   const startIndex = (currentPage - 1) * itemsPerPage;
-  const currentStores = stores.slice(startIndex, startIndex + itemsPerPage);
+  const currentStores = stores?.slice(startIndex, startIndex + itemsPerPage) || [];
 
   const dropdownItemStyle = {
     display: "flex",
@@ -169,7 +170,7 @@ export default function Partner({
             margin: 0,
           }}
         >
-          {partner.name || "Unknown"}
+          {partner?.name || "Unknown"}
         </h2>
       </div>
       {/* Partner Details */}
@@ -177,40 +178,40 @@ export default function Partner({
         <h3 className="section-title">Partner Details</h3>
         <div className="details-grid">
           <div>
-            <span>Name:</span> {partner.name}
+            <span>Name:</span> {partner?.name || "-"}
           </div>
           <div>
-            <span>Email:</span> {partner.email}
+            <span>Email:</span> {partner?.email || "-"}
           </div>
           <div>
-            <span>Phone:</span> {partner.mobilePhone}
+            <span>Phone:</span> {partner?.mobilePhone || "-"}
           </div>
           <div>
-            <span>Platform:</span> {partner.platform}
+            <span>Platform:</span> {partner?.platform || "-"}
           </div>
           <div>
-            <span>Affiliate Handle:</span> {partner.affiliate_handle}
+            <span>Affiliate Handle:</span> {partner?.affiliate_handle || "-"}
           </div>
           <div>
             <span>Status:</span>{" "}
-            <strong className={`status ${partner.status?.toLowerCase()}`}>
-              {partner.status}
+            <strong className={`status ${partner?.status?.toLowerCase() || ""}`}>
+              {partner?.status || "-"}
             </strong>
           </div>
           <div>
-            <span>Reference Link:</span> {partner.refernceLink}
+            <span>Reference Link:</span> {partner?.refernceLink || "-"}
           </div>
           <div>
-            <span>Description:</span> {partner.description}
+            <span>Description:</span> {partner?.description || "-"}
           </div>
           <div>
-            <span>Additional Info:</span> {partner.additional_info}
+            <span>Additional Info:</span> {partner?.additional_info || "-"}
           </div>
           <div>
             <span>Created At:</span>{" "}
-            {partner.created_at
+            {partner?.created_at
               ? new Date(partner.created_at).toLocaleDateString()
-              : ""}
+              : "-"}
           </div>
         </div>
       </div>
@@ -255,8 +256,14 @@ export default function Partner({
                 style={closeBtnStyle}
                 onClick={() => {
                   setShowAddModal(false);
-                  setNewStore({});
-                  setEditStore(false);
+                  setNewStore({
+                    store_name: "",
+                    store_owner: "",
+                    platform: "",
+                    commission: "",
+                    total_value: "",
+                  });
+                  setEditStore(null);
                 }}
                 title="Close"
               >
@@ -277,11 +284,12 @@ export default function Partner({
                   e.preventDefault();
                   if (editStore) {
                     await onUpdateStore(
-                      editStore.id,
+                      editStore?.id,
                       newStore,
                       () =>
                         setNewStore({
                           store_name: "",
+                          store_owner: "",
                           platform: "",
                           commission: "",
                           total_value: "",
@@ -296,23 +304,46 @@ export default function Partner({
               >
                 <div style={{ marginBottom: 14 }}>
                   <label style={{ display: "block", fontWeight: 500, marginBottom: 4 }}>Store Name</label>
-                  <input name="store_name" value={newStore.store_name} onChange={handleAddStoreChange} required style={{ width: "100%", padding: 8, borderRadius: 4, border: "1px solid #ccc" }} />
+                  <input name="store_name" value={newStore?.store_name || ""} onChange={handleAddStoreChange} required style={{ width: "100%", padding: 8, borderRadius: 4, border: "1px solid #ccc" }} />
                 </div>
                 <div style={{ marginBottom: 14 }}>
                   <label style={{ display: "block", fontWeight: 500, marginBottom: 4 }}>Store Owner</label>
-                  <input name="store_owner" value={newStore.store_owner} onChange={handleAddStoreChange} required style={{ width: "100%", padding: 8, borderRadius: 4, border: "1px solid #ccc" }} />
+                  <input name="store_owner" value={newStore?.store_owner || ""} onChange={handleAddStoreChange} required style={{ width: "100%", padding: 8, borderRadius: 4, border: "1px solid #ccc" }} />
                 </div>
                 <div style={{ marginBottom: 14 }}>
-                  <label style={{ display: "block", fontWeight: 500, marginBottom: 4 }}>Platform</label>
-                  <input name="platform" value={newStore.platform} onChange={handleAddStoreChange} required style={{ width: "100%", padding: 8, borderRadius: 4, border: "1px solid #ccc" }} placeholder="shopify, woocommerce, etc." />
+                  <label style={{ display: "block", fontWeight: 500, marginBottom: 4 }}>
+                    Platform
+                  </label>
+                  <select
+                    name="platform"
+                    value={newStore?.platform || ""}
+                    onChange={handleAddStoreChange}
+                    required
+                    style={{
+                      width: "100%",
+                      padding: 8,
+                      borderRadius: 4,
+                      border: "1px solid #ccc",
+                      background: "#fff",
+                      fontSize: 15,
+                    }}
+                  >
+                    <option value="">-- Select Platform --</option>
+                    <option value="shopify">Shopify</option>
+                    <option value="woocommerce">WooCommerce</option>
+                    <option value="bigcommerce">BigCommerce</option>
+                    <option value="custom">Custom</option>
+                    <option value="other">Other</option>
+                  </select>
                 </div>
+
                 <div style={{ marginBottom: 14 }}>
                   <label style={{ display: "block", fontWeight: 500, marginBottom: 4 }}>Commission (%)</label>
-                  <input name="commission" value={newStore.commission} onChange={handleAddStoreChange} required type="number" min="0" max="100" style={{ width: "100%", padding: 8, borderRadius: 4, border: "1px solid #ccc" }} placeholder="e.g. 75" />
+                  <input name="commission" value={newStore?.commission || ""} onChange={handleAddStoreChange} required type="number" min="0" max="100" style={{ width: "100%", padding: 8, borderRadius: 4, border: "1px solid #ccc" }} placeholder="e.g. 75" />
                 </div>
                 <div style={{ marginBottom: 18 }}>
                   <label style={{ display: "block", fontWeight: 500, marginBottom: 4 }}>Total Value</label>
-                  <input name="total_value" value={newStore.total_value} onChange={handleAddStoreChange} required type="number" min="0" step="0.01" style={{ width: "100%", padding: 8, borderRadius: 4, border: "1px solid #ccc" }} placeholder="e.g. 1200.00" />
+                  <input name="total_value" value={newStore?.total_value || ""} onChange={handleAddStoreChange} required type="number" min="0" step="0.01" style={{ width: "100%", padding: 8, borderRadius: 4, border: "1px solid #ccc" }} placeholder="e.g. 1200.00" />
                 </div>
                 <button type="submit" style={{ background: "#4f46e5", color: "#fff", border: "none", borderRadius: 4, padding: "8px 20px", fontWeight: 600, fontSize: 16, cursor: "pointer", width: "100%" }}>{editStore ? "Update Store" : "Add Store"}</button>
               </form>
@@ -412,8 +443,8 @@ export default function Partner({
         )}
 
         {/* Stores Table */}
-        <div className="table-container">
-          <table>
+        <div className="table-container" style={{ overflow: 'visible' }}>
+          <table style={{ overflow: 'visible' }}>
             <thead>
               <tr>
                 <th>#</th>
@@ -427,30 +458,33 @@ export default function Partner({
                 <th>Action</th>
               </tr>
             </thead>
-            <tbody>
-              {currentStores.length > 0 ? (
+            <tbody style={{ overflow: 'visible' }}>
+              {currentStores?.length > 0 ? (
                 currentStores.map((store, idx) => (
-                  <tr key={store.id}>
+                  <tr key={store?.id} style={{ overflow: 'visible' }}>
                     <td>{startIndex + idx + 1}</td>
-                    <td>{store?.store_name}</td>
+                    <td>{store?.store_name || '-'}</td>
                     <td>{store?.store_owner || '-'}</td>
-                    <td className="capitalize">{store.platform}</td>
-                    <td>{Math.floor(store.earning)}</td>
-                    <td>{Math.floor(store.total_value)}</td>
+                    <td className="capitalize">{store?.platform || '-'}</td>
+                    <td>{Math.floor(store?.earning || 0)}</td>
+                    <td>{Math.floor(store?.total_value || 0)}</td>
                     <td className="capitalize">
-                      <span className={`status ${store.status?.toLowerCase()}`}>
-                        {store.status}
+                      <span className={`status ${store?.status?.toLowerCase() || ""}`}>
+                        {store?.status || '-'}
                       </span>
                     </td>
                     <td>
-                      {store.created_at
+                      {store?.created_at
                         ? new Date(store.created_at).toLocaleDateString()
-                        : ""}
+                        : "-"}
                     </td>
-                    <td>
+                    <td style={{ overflow: 'visible', position: 'relative' }}>
                       <div
-                        style={{ position: "relative", display: "inline-block" }}
-                        ref={(el) => (dropdownRefs.current[store.id] = el)}
+                        style={{
+                          position: "relative",
+                          display: "inline-block"
+                        }}
+                        ref={(el) => (dropdownRefs.current[store?.id] = el)}
                       >
                         <button
                           style={{
@@ -463,48 +497,65 @@ export default function Partner({
                             border: "none",
                             cursor: "pointer",
                           }}
-                          onClick={() => setDropdownOpen(store.id)}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setDropdownOpen(dropdownOpen === store?.id ? null : store?.id);
+                          }}
                           type="button"
                         >
                           <BsThreeDotsVertical
                             style={{ color: "#4f46e5", fontSize: 18, marginRight: 4 }}
                           />
                         </button>
-                        {dropdownOpen === store.id && (
+                        {dropdownOpen === store?.id && (
                           <div
                             style={{
                               position: "absolute",
-                              top: "110%",
-                              right: 0,
+                              top: "-5%",
+                              right: "-110%",
+                              transform: "translateX(-50%)",
                               background: "#fff",
                               border: "1px solid #eee",
                               borderRadius: 6,
-                              boxShadow: "0 2px 8px rgba(0,0,0,0.12)",
+                              boxShadow: "0 4px 12px rgba(0,0,0,0.15)",
                               minWidth: 140,
-                              zIndex: 1000,
+                              zIndex: 9999,
+                              marginTop: 8,
+                              overflow: 'visible'
                             }}
                           >
                             <button
-                              style={dropdownItemStyle}
+                              style={{
+                                ...dropdownItemStyle,
+                                borderBottom: '1px solid #f5f5f5'
+                              }}
+                              onMouseEnter={(e) => e.target.style.backgroundColor = '#f8f9fa'}
+                              onMouseLeave={(e) => e.target.style.backgroundColor = 'transparent'}
                               onClick={() => {
                                 setDropdownOpen(null);
-                                window.location.href = `/dashboard/partner/store/${store.id}`;
+                                window.location.href = `/dashboard/partner/store/${store?.id}`;
                               }}
                             >
                               <FiEye style={{ marginRight: 8 }} /> View
                             </button>
                             <button
-                              style={dropdownItemStyle}
+                              style={{
+                                ...dropdownItemStyle,
+                                borderBottom: '1px solid #f5f5f5'
+                              }}
+                              onMouseEnter={(e) => e.target.style.backgroundColor = '#f8f9fa'}
+                              onMouseLeave={(e) => e.target.style.backgroundColor = 'transparent'}
                               onClick={() => {
                                 setDropdownOpen(null);
                                 setEditStore(store);
                                 setNewStore({
-                                  store_name: store.store_name || "",
-                                  platform: store.platform || "",
+                                  store_name: store?.store_name || "",
+                                  store_owner: store?.store_owner || "",
+                                  platform: store?.platform || "",
                                   commission:
-                                    (store.earning / store.total_value) * 100 || "",
-                                  earning: Math.floor(store.earning),
-                                  total_value: Math.floor(store.total_value) || "",
+                                    ((store?.earning || 0) / (store?.total_value || 1)) * 100 || "",
+                                  earning: Math.floor(store?.earning || 0),
+                                  total_value: Math.floor(store?.total_value || 0) || "",
                                 });
                                 setShowAddModal(true);
                               }}
@@ -525,9 +576,14 @@ export default function Partner({
                               </svg>{" "}
                               Update
                             </button>
-                            {store.status?.toLowerCase() === "active" ? (
+                            {store?.status?.toLowerCase() === "active" ? (
                               <button
-                                style={dropdownItemStyle}
+                                style={{
+                                  ...dropdownItemStyle,
+                                  borderBottom: 'none'
+                                }}
+                                onMouseEnter={(e) => e.target.style.backgroundColor = '#fef2f2'}
+                                onMouseLeave={(e) => e.target.style.backgroundColor = 'transparent'}
                                 onClick={() => {
                                   setDeactivatingStore(store);
                                   setShowDeactivateModal(true);
@@ -552,9 +608,14 @@ export default function Partner({
                               </button>
                             ) : (
                               <button
-                                style={dropdownItemStyle}
+                                style={{
+                                  ...dropdownItemStyle,
+                                  borderBottom: 'none'
+                                }}
+                                onMouseEnter={(e) => e.target.style.backgroundColor = '#f0fdf4'}
+                                onMouseLeave={(e) => e.target.style.backgroundColor = 'transparent'}
                                 onClick={() => {
-                                  onUpdateStatus(store.id, "active");
+                                  onUpdateStatus?.(store?.id, "active");
                                   setDropdownOpen(null);
                                 }}
                               >
@@ -583,7 +644,7 @@ export default function Partner({
                 ))
               ) : (
                 <tr>
-                  <td colSpan="8" className="no-items">
+                  <td colSpan="9" className="no-items">
                     No stores
                   </td>
                 </tr>
@@ -593,7 +654,7 @@ export default function Partner({
         </div>
 
         {/* Pagination */}
-        {stores.length > 4 && (
+        {(stores?.length || 0) > 4 && (
           <div className="pagination">
             <button
               onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}

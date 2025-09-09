@@ -13,6 +13,11 @@ export default function DealDash() {
     const [error, setError] = useState("");
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 5;
+    const [requests, setRequests] = useState([]);
+
+
+    // filter state
+    const [dateFilter, setDateFilter] = useState("all");
 
     // role & partnerId from localStorage
     let role = "partner";
@@ -58,6 +63,31 @@ export default function DealDash() {
         fetchDeals();
     }, [role, partnerId]);
 
+    // filter logic
+    const filterByDate = (data) => {
+        if (dateFilter === "all") return data;
+        const today = new Date();
+        return data.filter((item) => {
+            const created = new Date(item?.created_at);
+            if (dateFilter === "today") {
+                return (
+                    created.toDateString() === today.toDateString()
+                );
+            } else if (dateFilter === "7days") {
+                const past7 = new Date();
+                past7.setDate(today.getDate() - 7);
+                return created >= past7;
+            } else if (dateFilter === "30days") {
+                const past30 = new Date();
+                past30.setDate(today.getDate() - 30);
+                return created >= past30;
+            }
+            return true;
+        });
+    };
+
+    const filteredData = filterByDate(requests);
+
     // ✅ Table data + pagination logic (only active deals)
     const tableData = Array.isArray(deals)
         ? deals.filter((deal) => deal?.status?.toLowerCase() === "active")
@@ -73,6 +103,23 @@ export default function DealDash() {
             {/* Header */}
             <div className="header">
                 <h2>Deals</h2>
+            </div>
+
+            <div className="filter-container">
+                <label htmlFor="dateFilter">Filter by Date:</label>
+                <select
+                    id="dateFilter"
+                    value={dateFilter}
+                    onChange={(e) => {
+                        setDateFilter(e.target.value);
+                        setCurrentPage(1);
+                    }}
+                >
+                    <option value="all">All</option>
+                    <option value="today">Today</option>
+                    <option value="7days">Last 7 Days</option>
+                    <option value="30days">Last 30 Days</option>
+                </select>
             </div>
 
             <ToastContainer position="top-center" autoClose={3000} theme="colored" />

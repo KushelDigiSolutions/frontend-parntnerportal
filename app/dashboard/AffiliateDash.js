@@ -6,6 +6,13 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "./AffiliateDash.css";
 
+// ✅ Helper function
+function sortByDateDesc(list) {
+  return [...list].sort(
+    (a, b) => new Date(b.created_at) - new Date(a.created_at)
+  );
+}
+
 export default function AffiliateDash() {
   const router = useRouter();
   const [partners, setPartners] = useState([]);
@@ -48,7 +55,7 @@ export default function AffiliateDash() {
           );
           const data = await res.json();
           if (res.ok && data?.success) {
-            setPartners(data?.data ?? []);
+            setPartners(sortByDateDesc(data?.data ?? []));
           } else {
             setError(data?.message ?? "Failed to fetch partners");
           }
@@ -65,7 +72,8 @@ export default function AffiliateDash() {
           );
           const data = await res.json();
           if (res.ok && data?.success) {
-            setStores(Array.isArray(data?.data) ? data?.data : [data?.data]);
+            const arr = Array.isArray(data?.data) ? data?.data : [data?.data];
+            setStores(sortByDateDesc(arr));
           } else {
             setError(data?.message ?? "Failed to fetch stores");
           }
@@ -236,7 +244,7 @@ export default function AffiliateDash() {
                     <td className="capitalize">{item?.platform}</td>
                     <td>{item?.affiliate_handle}</td>
                     <td className="capitalize">
-                      <span className={`status text-green-700  ${item?.status?.toLowerCase()}`}>
+                      <span className={`status text-green-700 ${item?.status?.toLowerCase()}`}>
                         {item?.status}
                       </span>
                     </td>
@@ -302,7 +310,7 @@ export default function AffiliateDash() {
                   <tr key={store?.partner_id}>
                     <td>{startIndex + index + 1}</td>
                     <td>{store?.store_name}</td>
-                    <td>{store?.store_owner || '-'}</td>
+                    <td>{store?.store_owner || "-"}</td>
                     <td className="capitalize">{store?.platform}</td>
                     <td>{Math.floor(store?.earning ?? 0)}</td>
                     <td>{Math.floor(store?.total_value ?? 0)}</td>

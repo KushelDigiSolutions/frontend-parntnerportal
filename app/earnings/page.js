@@ -17,14 +17,18 @@ export default function EarningsPage() {
   const itemsPerPage = 5;
 
   const [dropdownOpen, setDropdownOpen] = useState(null);
-  const dropdownRefs = useRef({});
+  const [dropdownStyle, setDropdownStyle] = useState({});
+
+  // 🔹 Date filter states
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
 
   // Close dropdown on outside click
   useEffect(() => {
     function handleClickOutside(event) {
       if (dropdownOpen !== null) {
-        const ref = dropdownRefs.current?.[dropdownOpen];
-        if (ref && !ref.contains(event.target)) {
+        const dropdownEl = document.getElementById("dropdown-menu");
+        if (dropdownEl && !dropdownEl.contains(event.target)) {
           setDropdownOpen(null);
         }
       }
@@ -65,19 +69,86 @@ export default function EarningsPage() {
     fetchPayments();
   }, []);
 
-  const filteredPayments = payments ?? [];
+  // 🔹 Filter payments based on selected date range
+  const filteredPayments = payments.filter((p) => {
+    const paymentStart = p?.created_at ? new Date(p.created_at) : null;
+    const paymentEnd = p?.end_date ? new Date(p.end_date) : null;
 
-  const paginatedPayments = filteredPayments?.slice(
-    (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage
-  ) ?? [];
+    const start = startDate ? new Date(startDate) : null;
+    const end = endDate ? new Date(endDate) : null;
+
+    if (start && end) {
+      return paymentStart >= start && paymentEnd <= end;
+    }
+    if (start && !end) {
+      return paymentStart >= start;
+    }
+    if (!start && end) {
+      return paymentEnd <= end;
+    }
+    return true;
+  });
+
+  const paginatedPayments =
+    filteredPayments?.slice(
+      (currentPage - 1) * itemsPerPage,
+      currentPage * itemsPerPage
+    ) ?? [];
+
+  // 🔹 handle dropdown position
+  const openDropdown = (paymentId, event) => {
+    const rect = event.currentTarget.getBoundingClientRect();
+    setDropdownStyle({
+      position: "fixed",
+      top: rect.bottom + 4,
+      left: rect.left - 120, // dropdown width adjust karo
+      zIndex: 3000,
+    });
+    setDropdownOpen(paymentId);
+  };
 
   return (
     <div className="affiliate-container">
       {/* Heading */}
-      <h2 className="partner-heading" style={{ marginBottom: "20px" }}>
+      <h2 className="partner-heading" style={{ marginBottom: "10px" }}>
         Earnings
       </h2>
+
+      {/* 🔹 Date Filter UI */}
+      <div className="filter-bar">
+        <div className="filter-field">
+          <label>Start Date:</label>
+          <input
+            type="date"
+            value={startDate}
+            onChange={(e) => {
+              setStartDate(e.target.value);
+              setCurrentPage(1);
+            }}
+          />
+        </div>
+        <div className="filter-field">
+          <label>End Date:</label>
+          <input
+            type="date"
+            value={endDate}
+            onChange={(e) => {
+              setEndDate(e.target.value);
+              setCurrentPage(1);
+            }}
+          />
+        </div>
+        <button
+          className="reset-btn"
+          onClick={() => {
+            setStartDate("");
+            setEndDate("");
+            setCurrentPage(1);
+          }}
+        >
+          Reset
+        </button>
+      </div>
 
       {/* Table */}
       <div className="table-container">
@@ -98,13 +169,13 @@ export default function EarningsPage() {
           <tbody>
             {loading ? (
               <tr>
-                <td colSpan="8" className="no-items">
+                <td colSpan="9" className="no-items">
                   Loading...
                 </td>
               </tr>
             ) : error ? (
               <tr>
-                <td colSpan="8" className="no-items">
+                <td colSpan="9" className="no-items">
                   {error}
                 </td>
               </tr>
@@ -116,7 +187,9 @@ export default function EarningsPage() {
                   <td>{Math.floor(payment?.amount ?? 0)}</td>
                   <td>
                     {payment?.created_at
-                      ? new Date(payment?.created_at)?.toLocaleDateString("en-GB")
+                      ? new Date(payment?.created_at)?.toLocaleDateString(
+                          "en-GB"
+                        )
                       : ""}
                   </td>
                   <td>
@@ -124,7 +197,12 @@ export default function EarningsPage() {
                       ? new Date(payment?.end_date)?.toLocaleDateString("en-GB")
                       : ""}
                   </td>
-                  <td>{Math.floor(((payment?.amount ?? 0) * (payment?.commission ?? 0)) / 100)}</td>
+                  <td>
+                    {Math.floor(
+                      ((payment?.amount ?? 0) * (payment?.commission ?? 0)) /
+                        100
+                    )}
+                  </td>
                   <td>
                     <span
                       style={{
@@ -136,10 +214,10 @@ export default function EarningsPage() {
                           payment?.status?.toLowerCase() === "paid"
                             ? "rgb(50 200 100)"
                             : payment?.status?.toLowerCase() === "pending"
-                              ? "#facc15"
-                              : payment?.status?.toLowerCase() === "failed"
-                                ? "#ef4444"
-                                : "#888",
+                            ? "#facc15"
+                            : payment?.status?.toLowerCase() === "failed"
+                            ? "#ef4444"
+                            : "#888",
                         fontSize: 13,
                         textTransform: "capitalize",
                       }}
@@ -148,10 +226,7 @@ export default function EarningsPage() {
                     </span>
                   </td>
                   <td>{payment?.store_name ?? "-"}</td>
-                  <td
-                    style={{ position: "relative" }}
-                    ref={(el) => (dropdownRefs.current[payment?.id] = el)}
-                  >
+                  <td>
                     <button
                       style={{
                         background: "none",
@@ -159,7 +234,7 @@ export default function EarningsPage() {
                         cursor: "pointer",
                         padding: 4,
                       }}
-                      onClick={() => setDropdownOpen(payment?.id)}
+                      onClick={(e) => openDropdown(payment?.id, e)}
                     >
                       <BsThreeDotsVertical
                         style={{
@@ -169,50 +244,12 @@ export default function EarningsPage() {
                         }}
                       />
                     </button>
-
-                    {dropdownOpen === payment?.id && (
-                      <div
-                        style={{
-                          position: "absolute",
-                          top: "100%",
-                          right: 0,
-                          marginTop: 4,
-                          background: "#fff",
-                          border: "1px solid #eee",
-                          borderRadius: 6,
-                          boxShadow: "0 2px 8px rgba(0,0,0,0.12)",
-                          width: 160,
-                          zIndex: 2000,
-                        }}
-                      >
-                        <button
-                          style={{
-                            display: "flex",
-                            alignItems: "center",
-                            width: "100%",
-                            background: "none",
-                            border: "none",
-                            padding: "10px 16px",
-                            fontSize: 15,
-                            color: "#333",
-                            cursor: "pointer",
-                            textAlign: "left",
-                          }}
-                          onClick={() => {
-                            setDropdownOpen(null);
-                            setViewPayment(payment);
-                          }}
-                        >
-                          <FiEye style={{ marginRight: 8 }} /> View
-                        </button>
-                      </div>
-                    )}
                   </td>
                 </tr>
               ))
             ) : (
               <tr>
-                <td colSpan="8" className="no-items">
+                <td colSpan="9" className="no-items">
                   No payments found
                 </td>
               </tr>
@@ -223,14 +260,7 @@ export default function EarningsPage() {
 
       {/* Pagination */}
       {filteredPayments?.length > itemsPerPage && (
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "center",
-            marginTop: 16,
-            gap: 8,
-          }}
-        >
+        <div className="pagination-bar">
           <button
             className="page-btn"
             disabled={currentPage === 1}
@@ -254,10 +284,49 @@ export default function EarningsPage() {
 
           <button
             className="page-btn"
-            disabled={currentPage === Math.ceil(filteredPayments?.length / itemsPerPage)}
+            disabled={
+              currentPage === Math.ceil(filteredPayments?.length / itemsPerPage)
+            }
             onClick={() => setCurrentPage((p) => p + 1)}
           >
             Next »
+          </button>
+        </div>
+      )}
+
+      {/* FIXED DROPDOWN */}
+      {dropdownOpen && (
+        <div
+          id="dropdown-menu"
+          style={{
+            ...dropdownStyle,
+            background: "#fff",
+            border: "1px solid #eee",
+            borderRadius: 6,
+            boxShadow: "0 2px 8px rgba(0,0,0,0.12)",
+            width: 100,
+          }}
+        >
+          <button
+            style={{
+              display: "flex",
+              alignItems: "center",
+              width: "100%",
+              background: "none",
+              border: "none",
+              padding: "10px 16px",
+              fontSize: 15,
+              color: "#333",
+              cursor: "pointer",
+              textAlign: "left",
+            }}
+            onClick={() => {
+              const selected = payments.find((p) => p.id === dropdownOpen);
+              setDropdownOpen(null);
+              setViewPayment(selected);
+            }}
+          >
+            <FiEye style={{ marginRight: 8 }} /> View
           </button>
         </div>
       )}
@@ -276,14 +345,12 @@ export default function EarningsPage() {
               onClick={() => setViewPayment(null)}
             />
             <h3 style={{ marginBottom: "16px" }}>Payment Details</h3>
-            {/* <p>
-              <strong>ID:</strong> {viewPayment?.id ?? "-"}
-            </p> */}
             <p>
               <strong>Amount:</strong> {Math.floor(viewPayment?.amount) ?? "-"}
             </p>
             <p>
-              <strong>Commission:</strong> {Math.floor(viewPayment?.commission) ?? "-"}%
+              <strong>Commission:</strong>{" "}
+              {Math.floor(viewPayment?.commission) ?? "-"}%
             </p>
             <p>
               <strong>Status:</strong> {viewPayment?.status ?? "-"}

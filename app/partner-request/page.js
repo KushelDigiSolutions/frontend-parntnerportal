@@ -5,13 +5,18 @@ import { BsThreeDotsVertical } from "react-icons/bs";
 import { MdCheckCircle, MdCancel } from "react-icons/md";
 import "../dashboard/AffiliateDash.css";
 
+// ✅ Helper function to sort by date (newest first)
+function sortByDateDesc(list) {
+    return [...list].sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+}
+
 export default function PartnerRequest() {
     const [requests, setRequests] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
     const [currentPage, setCurrentPage] = useState(1);
-    const itemsPerPage = 10;
-    const [activeTab, setActiveTab] = useState('all');
+    const itemsPerPage = 5;
+    const [activeTab, setActiveTab] = useState("all");
     const [viewData, setViewData] = useState(null);
 
     useEffect(() => {
@@ -32,16 +37,14 @@ export default function PartnerRequest() {
                 );
                 const data = await res.json();
                 if (res.ok && data.success) {
-                    // Only show pending requests
-                    setRequests(
-                        Array.isArray(data.data)
-                            ? data.data.filter((p) => p.status?.toLowerCase() !== "approved")
-                            : []
-                    );
+                    // ✅ sirf approved ko hata kar aur sort karke set kar rahe hain
+                    const filtered = Array.isArray(data.data)
+                        ? data.data.filter((p) => p.status?.toLowerCase() !== "approved")
+                        : [];
+                    setRequests(sortByDateDesc(filtered));
                 } else {
                     setError(data.message || "Failed to fetch data");
                 }
-
             } catch (err) {
                 setError("Network error");
             }
@@ -51,32 +54,69 @@ export default function PartnerRequest() {
     }, []);
 
     // Calculate pending and rejected counts
-    const pendingRequest = requests.filter((p) => p.status?.toLowerCase() === "pending")
-    const rejectedRequest = requests.filter((p) => p.status?.toLowerCase() === "rejected")
-    console.log(requests);
+    const pendingRequest = requests.filter(
+        (p) => p.status?.toLowerCase() === "pending"
+    );
+    const rejectedRequest = requests.filter(
+        (p) => p.status?.toLowerCase() === "rejected"
+    );
 
     const totalPages = Math.ceil(requests.length / itemsPerPage);
     const startIndex = (currentPage - 1) * itemsPerPage;
-    const currentData = activeTab === 'all' ? requests : (activeTab === "Pending" ? pendingRequest : rejectedRequest).slice(startIndex, startIndex + itemsPerPage);
+    const activeList =
+        activeTab === "all"
+            ? requests
+            : activeTab === "Pending"
+                ? pendingRequest
+                : rejectedRequest;
+    const currentData = activeList.slice(startIndex, startIndex + itemsPerPage);
 
     return (
         <div className="affiliate-container">
             <div className="header">
-                <div>
-                    <h2>Partner Requests</h2>
-                </div>
+                <h2>Partner Requests</h2>
             </div>
 
-            <div className="stats" >
-                <div className="stats-box partner cursor-pointer" onClick={() => setActiveTab('Pending')}>
+            <div className="stats" style={{ display: "flex", alignItems: "center", gap: 16 }}>
+                {/* ✅ All Requests */}
+                <div
+                    className={`stats-box all cursor-pointer ${activeTab === "all" ? "active" : ""}`}
+                    onClick={() => {
+                        setActiveTab("all");
+                        setCurrentPage(1);
+                    }}
+                >
+                    <p>All Requests</p>
+                    <h3>{requests.length}</h3>
+                </div>
+
+                {/* ✅ Pending */}
+                <div
+                    className={`stats-box partner cursor-pointer ${activeTab === "Pending" ? "active" : ""}`}
+                    onClick={() => {
+                        setActiveTab("Pending");
+                        setCurrentPage(1);
+                    }}
+                >
                     <p>Pending</p>
                     <h3>{pendingRequest.length}</h3>
                 </div>
-                <div className="stats-box request cursor-pointer" onClick={() => setActiveTab('Rejected')}>
+
+                {/* ✅ Rejected */}
+                <div
+                    className={`stats-box request cursor-pointer ${activeTab === "Rejected" ? "active" : ""}`}
+                    onClick={() => {
+                        setActiveTab("Rejected");
+                        setCurrentPage(1);
+                    }}
+                >
                     <p>Rejected</p>
                     <h3>{rejectedRequest.length}</h3>
                 </div>
             </div>
+
+
+
             <div className="table-container">
                 <table>
                     <thead>
@@ -142,9 +182,7 @@ export default function PartnerRequest() {
                                     <td>{item.platform}</td>
                                     <td>{item.affiliate_handle}</td>
                                     <td>
-                                        <span
-                                            className={`status ${item.status?.toLowerCase()}`}
-                                        >
+                                        <span className={`status ${item.status?.toLowerCase()}`}>
                                             {item.status}
                                         </span>
                                     </td>
@@ -177,8 +215,9 @@ export default function PartnerRequest() {
                     </tbody>
                 </table>
             </div>
+
             {/* Pagination */}
-            {requests.length > 0 && (
+            {activeList.length > 0 && (
                 <div className="pagination">
                     <button
                         onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
@@ -203,42 +242,94 @@ export default function PartnerRequest() {
                     </button>
                 </div>
             )}
+
             {/* Popup for view details */}
             {viewData && (
-                <div style={{
-                    position: 'fixed',
-                    top: 0,
-                    left: 0,
-                    width: '100vw',
-                    height: '100vh',
-                    background: 'rgba(0,0,0,0.25)',
-                    zIndex: 2000,
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                }} onClick={() => setViewData(null)}>
-                    <div style={{
-                        background: '#fff',
-                        borderRadius: 10,
-                        minWidth: 340,
-                        maxWidth: 630,
-                        padding: 32,
-                        boxShadow: '0 4px 24px rgba(0,0,0,0.12)',
-                        position: 'relative',
-                    }} onClick={e => e.stopPropagation()}>
-                        <button style={{ position: 'absolute', top: 10, right: 16, fontSize: 22, border: 'none', background: 'none', cursor: 'pointer' }} onClick={() => setViewData(null)}>&times;</button>
-                        <h2 style={{ marginBottom: 16, fontWeight: 600, fontSize: 20 }}>Partner Details</h2>
-                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, fontSize: 15 }}>
-                            <div><b>Name:</b> {viewData.name}</div>
-                            <div><b>Email:</b> {viewData.email}</div>
-                            <div><b>Mobile:</b> {viewData.mobilePhone}</div>
-                            <div><b>Platform:</b> {viewData.platform}</div>
-                            <div><b>Affiliate Handle:</b> {viewData.affiliate_handle}</div>
-                            <div><b>Status:</b> {viewData.status}</div>
-                            <div style={{ gridColumn: '1/3' }}><b>Reference Link:</b> {viewData.refernceLink}</div>
-                            <div style={{ gridColumn: '1/3' }}><b>Description:</b> {viewData.description}</div>
-                            <div style={{ gridColumn: '1/3' }}><b>Additional Info:</b> {viewData.additional_info}</div>
-                            <div style={{ gridColumn: '1/3' }}><b>Created At:</b> {viewData.created_at ? new Date(viewData.created_at).toLocaleDateString() : ''}</div>
+                <div
+                    style={{
+                        position: "fixed",
+                        top: 0,
+                        left: 0,
+                        width: "100vw",
+                        height: "100vh",
+                        background: "rgba(0,0,0,0.25)",
+                        zIndex: 2000,
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                    }}
+                    onClick={() => setViewData(null)}
+                >
+                    <div
+                        style={{
+                            background: "#fff",
+                            borderRadius: 10,
+                            minWidth: 340,
+                            maxWidth: 630,
+                            padding: 32,
+                            boxShadow: "0 4px 24px rgba(0,0,0,0.12)",
+                            position: "relative",
+                        }}
+                        onClick={(e) => e.stopPropagation()}
+                    >
+                        <button
+                            style={{
+                                position: "absolute",
+                                top: 10,
+                                right: 16,
+                                fontSize: 22,
+                                border: "none",
+                                background: "none",
+                                cursor: "pointer",
+                            }}
+                            onClick={() => setViewData(null)}
+                        >
+                            &times;
+                        </button>
+                        <h2 style={{ marginBottom: 16, fontWeight: 600, fontSize: 20 }}>
+                            Partner Details
+                        </h2>
+                        <div
+                            style={{
+                                display: "grid",
+                                gridTemplateColumns: "1fr 1fr",
+                                gap: 16,
+                                fontSize: 15,
+                            }}
+                        >
+                            <div>
+                                <b>Name:</b> {viewData.name}
+                            </div>
+                            <div>
+                                <b>Email:</b> {viewData.email}
+                            </div>
+                            <div>
+                                <b>Mobile:</b> {viewData.mobilePhone}
+                            </div>
+                            <div>
+                                <b>Platform:</b> {viewData.platform}
+                            </div>
+                            <div>
+                                <b>Affiliate Handle:</b> {viewData.affiliate_handle}
+                            </div>
+                            <div>
+                                <b>Status:</b> {viewData.status}
+                            </div>
+                            <div style={{ gridColumn: "1/3" }}>
+                                <b>Reference Link:</b> {viewData.refernceLink}
+                            </div>
+                            <div style={{ gridColumn: "1/3" }}>
+                                <b>Description:</b> {viewData.description}
+                            </div>
+                            <div style={{ gridColumn: "1/3" }}>
+                                <b>Additional Info:</b> {viewData.additional_info}
+                            </div>
+                            <div style={{ gridColumn: "1/3" }}>
+                                <b>Created At:</b>{" "}
+                                {viewData.created_at
+                                    ? new Date(viewData.created_at).toLocaleDateString()
+                                    : ""}
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -270,17 +361,20 @@ function DropdownMenu({ item, onView }) {
     }, [open]);
 
     async function handleApprove() {
-        setLoadingType('approve');
+        setLoadingType("approve");
         try {
             const token = localStorage.getItem("user_token");
-            const res = await fetch("https://partnerback.kdscrm.com/partner/approvePartner", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: `Bearer ${token}`,
-                },
-                body: JSON.stringify({ partnerId: item.id }), // changed from id to partnerId
-            });
+            const res = await fetch(
+                "https://partnerback.kdscrm.com/partner/approvePartner",
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${token}`,
+                    },
+                    body: JSON.stringify({ partnerId: item.id }),
+                }
+            );
             const data = await res.json();
             if (res.ok && data.success) {
                 alert("Partner approved successfully");
@@ -296,17 +390,20 @@ function DropdownMenu({ item, onView }) {
     }
 
     async function handleReject() {
-        setLoadingType('reject');
+        setLoadingType("reject");
         try {
             const token = localStorage.getItem("user_token");
-            const res = await fetch("https://partnerback.kdscrm.com/partner/rejectPartner", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: `Bearer ${token}`,
-                },
-                body: JSON.stringify({ partnerId: item.id }), // changed from id to partnerId
-            });
+            const res = await fetch(
+                "https://partnerback.kdscrm.com/partner/rejectPartner",
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${token}`,
+                    },
+                    body: JSON.stringify({ partnerId: item.id }),
+                }
+            );
             const data = await res.json();
             if (res.ok && data.success) {
                 alert("Partner rejected successfully");
@@ -324,11 +421,10 @@ function DropdownMenu({ item, onView }) {
     const handleDropdownOpen = () => {
         if (ref.current) {
             const rect = ref.current.getBoundingClientRect();
-            // Adjust left if dropdown would overflow right edge
-            const dropdownWidth = 180; // px, adjust if needed
+            const dropdownWidth = 180;
             let left = rect.left + window.scrollX;
             if (left + dropdownWidth > window.innerWidth - 12) {
-                left = window.innerWidth - dropdownWidth - 12; // 12px margin from right
+                left = window.innerWidth - dropdownWidth - 12;
             }
             setDropdownPos({
                 top: rect.bottom + window.scrollY,
@@ -348,7 +444,7 @@ function DropdownMenu({ item, onView }) {
                     display: "flex",
                     alignItems: "center",
                     gap: 8,
-                    border: 'none',
+                    border: "none",
                     cursor: "pointer",
                 }}
                 onClick={handleDropdownOpen}
@@ -357,22 +453,41 @@ function DropdownMenu({ item, onView }) {
                 <BsThreeDotsVertical style={{ color: "#4f46e5", fontSize: 18 }} />
             </button>
             {open && (
-                <div style={{
-                    position: "fixed",
-                    top: dropdownPos.top,
-                    left: dropdownPos.left,
-                    background: "#fff",
-                    border: "1px solid #eee",
-                    borderRadius: 6,
-                    boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
-                    zIndex: 1000,
-                    minWidth: 140,
-                    width: 130,
-                    overflow: 'hidden',
-                }}>
-                    <DropdownItem icon={<FiEye style={{ color: '#4f46e5', fontSize: 18 }} />} label="View" onClick={() => { setOpen(false); onView(item); }} />
-                    <DropdownItem icon={<MdCheckCircle style={{ color: '#22c55e', fontSize: 18 }} />} label={loadingType === 'approve' ? "Approving..." : "Approved"} onClick={handleApprove} disabled={loadingType !== null} />
-                    <DropdownItem icon={<MdCancel style={{ color: '#ef4444', fontSize: 18 }} />} label={loadingType === 'reject' ? "Rejecting..." : "Rejected"} onClick={handleReject} disabled={loadingType !== null} />
+                <div
+                    style={{
+                        position: "fixed",
+                        top: dropdownPos.top,
+                        left: dropdownPos.left,
+                        background: "#fff",
+                        border: "1px solid #eee",
+                        borderRadius: 6,
+                        boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
+                        zIndex: 1000,
+                        minWidth: 140,
+                        width: 130,
+                        overflow: "hidden",
+                    }}
+                >
+                    <DropdownItem
+                        icon={<FiEye style={{ color: "#4f46e5", fontSize: 18 }} />}
+                        label="View"
+                        onClick={() => {
+                            setOpen(false);
+                            onView(item);
+                        }}
+                    />
+                    <DropdownItem
+                        icon={<MdCheckCircle style={{ color: "#22c55e", fontSize: 18 }} />}
+                        label={loadingType === "approve" ? "Approving..." : "Approve"}
+                        onClick={handleApprove}
+                        disabled={loadingType !== null}
+                    />
+                    <DropdownItem
+                        icon={<MdCancel style={{ color: "#ef4444", fontSize: 18 }} />}
+                        label={loadingType === "reject" ? "Rejecting..." : "Reject"}
+                        onClick={handleReject}
+                        disabled={loadingType !== null}
+                    />
                 </div>
             )}
         </div>
@@ -386,13 +501,13 @@ function DropdownItem({ icon, label, onClick, disabled }) {
             style={{
                 padding: "10px 18px",
                 cursor: disabled ? "not-allowed" : "pointer",
-                display: 'flex',
-                alignItems: 'center',
+                display: "flex",
+                alignItems: "center",
                 gap: 10,
-                background: hover && !disabled ? '#f3f4f6' : '#fff',
+                background: hover && !disabled ? "#f3f4f6" : "#fff",
                 fontWeight: 500,
                 fontSize: 15,
-                transition: 'background 0.15s',
+                transition: "background 0.15s",
                 opacity: disabled ? 0.6 : 1,
             }}
             onMouseEnter={() => setHover(true)}

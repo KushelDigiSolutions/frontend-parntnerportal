@@ -1,6 +1,11 @@
 "use client";
 import React, { useEffect, useRef, useState } from "react";
-import { FiEye, FiCheckCircle, FiPauseCircle, FiXCircle } from "react-icons/fi";
+import {
+    FiEye,
+    FiCheckCircle,
+    FiPauseCircle,
+    FiXCircle
+} from "react-icons/fi";
 import { BsThreeDotsVertical } from "react-icons/bs";
 import "../dashboard/AffiliateDash.css";
 
@@ -13,6 +18,9 @@ export default function ReferClient() {
     // pagination state
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 5;
+
+    // filter state
+    const [dateFilter, setDateFilter] = useState("all");
 
     useEffect(() => {
         (async () => {
@@ -43,9 +51,34 @@ export default function ReferClient() {
         })();
     }, []);
 
+    // filter logic
+    const filterByDate = (data) => {
+        if (dateFilter === "all") return data;
+        const today = new Date();
+        return data.filter((item) => {
+            const created = new Date(item?.created_at);
+            if (dateFilter === "today") {
+                return (
+                    created.toDateString() === today.toDateString()
+                );
+            } else if (dateFilter === "7days") {
+                const past7 = new Date();
+                past7.setDate(today.getDate() - 7);
+                return created >= past7;
+            } else if (dateFilter === "30days") {
+                const past30 = new Date();
+                past30.setDate(today.getDate() - 30);
+                return created >= past30;
+            }
+            return true;
+        });
+    };
+
+    const filteredData = filterByDate(requests);
+
     // pagination logic
-    const totalPages = Math.ceil(requests?.length / itemsPerPage);
-    const currentData = requests?.slice(
+    const totalPages = Math.ceil(filteredData?.length / itemsPerPage);
+    const currentData = filteredData?.slice(
         (currentPage - 1) * itemsPerPage,
         currentPage * itemsPerPage
     );
@@ -86,6 +119,24 @@ export default function ReferClient() {
                 <h2>Referred Clients</h2>
             </div>
 
+            <div className="filter-container">
+                <label htmlFor="dateFilter">Filter by Date:</label>
+                <select
+                    id="dateFilter"
+                    value={dateFilter}
+                    onChange={(e) => {
+                        setDateFilter(e.target.value);
+                        setCurrentPage(1);
+                    }}
+                >
+                    <option value="all">All</option>
+                    <option value="today">Today</option>
+                    <option value="7days">Last 7 Days</option>
+                    <option value="30days">Last 30 Days</option>
+                </select>
+            </div>
+
+
             <div className="table-container">
                 <table>
                     <thead>
@@ -97,7 +148,9 @@ export default function ReferClient() {
                             <th>Store Name</th>
                             <th>Referred By</th>
                             <th>Status</th>
-                            <th>Created At</th>
+                            <th>
+                                Created At
+                            </th>
                             <th>Action</th>
                         </tr>
                     </thead>
@@ -109,7 +162,9 @@ export default function ReferClient() {
                         ) : currentData?.length ? (
                             currentData?.map((item, index) => (
                                 <tr key={item?.id}>
-                                    <td>{(currentPage - 1) * itemsPerPage + index + 1}</td>
+                                    <td>
+                                        {(currentPage - 1) * itemsPerPage + index + 1}
+                                    </td>
                                     <td>{item?.name || "-"}</td>
                                     <td>{item?.email || "-"}</td>
                                     <td>{item?.phone || "-"}</td>
@@ -120,7 +175,9 @@ export default function ReferClient() {
                                     </td>
                                     <td>
                                         {item?.created_at
-                                            ? new Date(item?.created_at)?.toLocaleDateString()
+                                            ? new Date(
+                                                item?.created_at
+                                            )?.toLocaleDateString()
                                             : "-"}
                                     </td>
                                     <td>
@@ -140,7 +197,7 @@ export default function ReferClient() {
             </div>
 
             {/* Pagination */}
-            {requests?.length > itemsPerPage && totalPages > 1 && (
+            {filteredData?.length > itemsPerPage && totalPages > 1 && (
                 <Pagination
                     totalPages={totalPages}
                     currentPage={currentPage}
@@ -150,26 +207,30 @@ export default function ReferClient() {
 
             {/* Popup */}
             {viewData && (
-                <DetailsPopup data={viewData} onClose={() => setViewData(null)} />
+                <DetailsPopup
+                    data={viewData}
+                    onClose={() => setViewData(null)}
+                />
             )}
         </div>
     );
 }
 
+/* ---------- Status Badge ---------- */
 function StatusBadge({ status }) {
-    const normalized = status?.toLowerCase(); // 👈 normalize
+    const normalized = status?.toLowerCase();
 
-    let color = "#6b7280"; // default gray
+    let color = "#6b7280";
     let bg = "#f3f4f6";
 
     if (normalized === "confirmed") {
-        color = "#0f766e"; // green
+        color = "#0f766e";
         bg = "#d1fae5";
     } else if (normalized === "hold") {
-        color = "#92400e"; // orange
+        color = "#92400e";
         bg = "#fef3c7";
     } else if (normalized === "failed") {
-        color = "#991b1b"; // red
+        color = "#991b1b";
         bg = "#fee2e2";
     }
 
@@ -191,9 +252,7 @@ function StatusBadge({ status }) {
     );
 }
 
-
 /* ---------- Reusable Components ---------- */
-
 function TableMessage({ colSpan, text }) {
     return (
         <tr>
@@ -243,12 +302,24 @@ function DetailsPopup({ data, onClose }) {
                     Partner Details
                 </h2>
                 <div style={gridStyle}>
-                    <div><b>Name:</b> {data?.name || "-"}</div>
-                    <div><b>Email:</b> {data?.email || "-"}</div>
-                    <div><b>Mobile:</b> {data?.phone || "-"}</div>
-                    <div><b>Store Name:</b> {data?.store_name || "-"}</div>
-                    <div><b>Referred By:</b> {data?.partner_name || "-"}</div>
-                    <div><b>Status:</b> <StatusBadge status={data?.status} /></div>
+                    <div>
+                        <b>Name:</b> {data?.name || "-"}
+                    </div>
+                    <div>
+                        <b>Email:</b> {data?.email || "-"}
+                    </div>
+                    <div>
+                        <b>Mobile:</b> {data?.phone || "-"}
+                    </div>
+                    <div>
+                        <b>Store Name:</b> {data?.store_name || "-"}
+                    </div>
+                    <div>
+                        <b>Referred By:</b> {data?.partner_name || "-"}
+                    </div>
+                    <div>
+                        <b>Status:</b> <StatusBadge status={data?.status} />
+                    </div>
                     <div style={{ gridColumn: "1/3" }}>
                         <b>Created At:</b>{" "}
                         {data?.created_at
@@ -360,8 +431,10 @@ function DropdownItem({ icon, label, onClick }) {
 /* ---------- Inline Styles ---------- */
 const overlayStyle = {
     position: "fixed",
-    top: 0, left: 0,
-    width: "100vw", height: "100vh",
+    top: 0,
+    left: 0,
+    width: "100vw",
+    height: "100vh",
     background: "rgba(0,0,0,0.25)",
     zIndex: 2000,
     display: "flex",

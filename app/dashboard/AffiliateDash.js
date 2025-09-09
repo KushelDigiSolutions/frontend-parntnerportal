@@ -20,6 +20,7 @@ export default function AffiliateDash() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
+  const [showSessionExpired, setShowSessionExpired] = useState(false);
   const itemsPerPage = 5;
 
   // role & partnerId from localStorage
@@ -53,6 +54,10 @@ export default function AffiliateDash() {
               },
             }
           );
+          if (res.status === 401) {
+            setShowSessionExpired(true);
+            return;
+          }
           const data = await res.json();
           if (res.ok && data?.success) {
             setPartners(sortByDateDesc(data?.data ?? []));
@@ -70,6 +75,10 @@ export default function AffiliateDash() {
               },
             }
           );
+          if (res.status === 401) {
+            setShowSessionExpired(true);
+            return;
+          }
           const data = await res.json();
           if (res.ok && data?.success) {
             const arr = Array.isArray(data?.data) ? data?.data : [data?.data];
@@ -85,6 +94,11 @@ export default function AffiliateDash() {
     }
     fetchData();
   }, [role, partnerId]);
+
+  // `useEffect(() => {
+  //   setShowSessionExpired(true);
+
+  // }, [])`
 
   // ✅ copy referral link + show toast with link
   const handleCopyReferral = () => {
@@ -392,6 +406,70 @@ export default function AffiliateDash() {
           </button>
         </div>
       )}
+
+      {/* Session Expired Popup */}
+      {showSessionExpired && (
+        <div
+          style={{
+            position: "fixed",
+            top: 0,
+            left: 0,
+            width: "100%",
+            height: "100%",
+            backdropFilter: "blur(6px)", // background blur
+            background: "rgba(0,0,0,0.4)", // dark overlay
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            zIndex: 9999,
+          }}
+        >
+          <div
+            style={{
+              background: "rgba(255, 255, 255, 0.9)",
+              padding: "32px 24px",
+              borderRadius: "16px",
+              maxWidth: "420px",
+              width: "90%",
+              textAlign: "center",
+              boxShadow: "0 8px 24px rgba(0,0,0,0.2)",
+              backdropFilter: "blur(12px)", // glass effect
+            }}
+          >
+            <h3 style={{ fontSize: "20px", fontWeight: "600", marginBottom: "12px", color: "#1e1e2f" }}>
+              Session Expired
+            </h3>
+            <p style={{ margin: "0 0 20px", color: "#555", fontSize: "15px", lineHeight: "1.5" }}>
+              Your session has expired for security reasons.<br />
+              Please login again to continue.
+            </p>
+            <button
+              onClick={() => {
+                localStorage.clear();
+                setShowSessionExpired(false);
+                router.push("/login");
+              }}
+              style={{
+                background: "linear-gradient(135deg, #6366f1, #4f46e5)",
+                color: "#fff",
+                border: "none",
+                padding: "10px 20px",
+                borderRadius: "8px",
+                cursor: "pointer",
+                fontWeight: "500",
+                fontSize: "15px",
+                boxShadow: "0 4px 12px rgba(79, 70, 229, 0.4)",
+                transition: "all 0.3s ease",
+              }}
+              onMouseOver={(e) => (e.currentTarget.style.transform = "scale(1.05)")}
+              onMouseOut={(e) => (e.currentTarget.style.transform = "scale(1)")}
+            >
+              Go to Login
+            </button>
+          </div>
+        </div>
+      )}
+
     </div>
   );
 }

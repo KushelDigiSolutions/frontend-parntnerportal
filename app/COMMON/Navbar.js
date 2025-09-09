@@ -60,7 +60,7 @@ export default function Navbar({ sidebarOpen, setSidebarOpen }) {
 
             {/* Right user info */}
             <div className="user-info">
-                <FaBell className="icon-md" />
+                {/* <FaBell className="icon-md" /> */}
                 <FaUserCircle className="icon-lg" />
 
                 {/* Username with dropdown */}

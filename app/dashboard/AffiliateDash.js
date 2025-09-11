@@ -33,7 +33,7 @@ export default function AffiliateDash() {
       const userObj = JSON.parse(user);
       role = userObj?.role ?? role;
       partnerId = userObj?.id ?? null;
-      referenceLink = `https://referral-client.vercel.app/?refer=${userObj?.refernceLink}` ?? "";
+      referenceLink = `https://krcustomizer.com/referral/?refer=${userObj?.refernceLink}` ?? "";
     }
   } catch { }
 
@@ -205,7 +205,7 @@ export default function AffiliateDash() {
                 <th>Email</th>
                 <th>Mobile</th>
                 <th>Platform</th>
-                <th>Affiliate Handle</th>
+                {/* <th>Affiliate Handle</th> */}
                 <th>Status</th>
                 <th>Reference Link</th>
                 <th>Created At</th>
@@ -256,7 +256,7 @@ export default function AffiliateDash() {
                     <td>{item?.email}</td>
                     <td>{item?.mobilePhone}</td>
                     <td className="capitalize">{item?.platform}</td>
-                    <td>{item?.affiliate_handle}</td>
+                    {/* <td>{item?.affiliate_handle}</td> */}
                     <td className="capitalize">
                       <span className={`status text-green-700 ${item?.status?.toLowerCase()}`}>
                         {item?.status}

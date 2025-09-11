@@ -189,9 +189,9 @@ export default function Partner({
           <div>
             <span>Platform:</span> {partner?.platform || "-"}
           </div>
-          <div>
+          {/* <div>
             <span>Affiliate Handle:</span> {partner?.affiliate_handle || "-"}
-          </div>
+          </div> */}
           <div>
             <span>Status:</span>{" "}
             <strong className={`status ${partner?.status?.toLowerCase() || ""}`}>
@@ -333,7 +333,6 @@ export default function Partner({
                     <option value="woocommerce">WooCommerce</option>
                     <option value="bigcommerce">BigCommerce</option>
                     <option value="custom">Custom</option>
-                    <option value="other">Other</option>
                   </select>
                 </div>
 
@@ -644,7 +643,7 @@ export default function Partner({
                 ))
               ) : (
                 <tr>
-                  <td colSpan="9" className="no-items">
+                  <td colSpan="8" className="no-items">
                     No stores
                   </td>
                 </tr>

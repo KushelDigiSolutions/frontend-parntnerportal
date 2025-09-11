@@ -126,7 +126,7 @@ export default function PartnerRequest() {
                             <th>Email</th>
                             <th>Mobile</th>
                             <th>Platform</th>
-                            <th>Affiliate Handle</th>
+                            {/* <th>Affiliate Handle</th> */}
                             <th>Status</th>
                             <th>Reference Link</th>
                             <th>Created At</th>
@@ -180,7 +180,7 @@ export default function PartnerRequest() {
                                     <td>{item.email}</td>
                                     <td>{item.mobilePhone}</td>
                                     <td>{item.platform}</td>
-                                    <td>{item.affiliate_handle}</td>
+                                    {/* <td>{item.affiliate_handle}</td> */}
                                     <td>
                                         <span className={`status ${item.status?.toLowerCase()}`}>
                                             {item.status}
@@ -207,7 +207,7 @@ export default function PartnerRequest() {
                             ))
                         ) : (
                             <tr>
-                                <td colSpan="10" className="no-items">
+                                <td colSpan="9" className="no-items">
                                     No requests
                                 </td>
                             </tr>
@@ -309,9 +309,9 @@ export default function PartnerRequest() {
                             <div>
                                 <b>Platform:</b> {viewData.platform}
                             </div>
-                            <div>
+                            {/* <div>
                                 <b>Affiliate Handle:</b> {viewData.affiliate_handle}
-                            </div>
+                            </div> */}
                             <div>
                                 <b>Status:</b> {viewData.status}
                             </div>

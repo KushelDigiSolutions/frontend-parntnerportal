@@ -250,7 +250,7 @@ export default function StoreDetailsPage() {
     const formatDate = useCallback((dateString) => {
         if (!dateString) return "";
         try {
-            return new Date(dateString).toLocaleDateString();
+            return new Date(dateString).toLocaleDateString("en-GB");
         } catch {
             return "";
         }

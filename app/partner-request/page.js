@@ -189,7 +189,7 @@ export default function PartnerRequest() {
                                     <td>{item.refernceLink}</td>
                                     <td>
                                         {item.created_at
-                                            ? new Date(item.created_at).toLocaleDateString()
+                                            ? new Date(item.created_at).toLocaleDateString("en-GB")
                                             : ""}
                                     </td>
                                     <td>
@@ -327,7 +327,7 @@ export default function PartnerRequest() {
                             <div style={{ gridColumn: "1/3" }}>
                                 <b>Created At:</b>{" "}
                                 {viewData.created_at
-                                    ? new Date(viewData.created_at).toLocaleDateString()
+                                    ? new Date(viewData.created_at).toLocaleDateString("en-GB")
                                     : ""}
                             </div>
                         </div>

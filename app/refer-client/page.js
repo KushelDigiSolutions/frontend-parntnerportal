@@ -177,7 +177,7 @@ export default function ReferClient() {
                                         {item?.created_at
                                             ? new Date(
                                                 item?.created_at
-                                            )?.toLocaleDateString()
+                                            )?.toLocaleDateString("en-GB")
                                             : "-"}
                                     </td>
                                     <td>
@@ -318,12 +318,21 @@ function DetailsPopup({ data, onClose }) {
                         <b>Referred By:</b> {data?.partner_name || "-"}
                     </div>
                     <div>
+                        <b>Country:</b> {data?.country || "-"}
+                    </div>
+                    <div>
+                        <b>City:</b> {data?.city || "-"}
+                    </div>
+                    <div>
+                        <b>Website:</b> {data?.website || "-"}
+                    </div>
+                    <div>
                         <b>Status:</b> <StatusBadge status={data?.status} />
                     </div>
                     <div style={{ gridColumn: "1/3" }}>
                         <b>Created At:</b>{" "}
                         {data?.created_at
-                            ? new Date(data?.created_at)?.toLocaleDateString()
+                            ? new Date(data?.created_at)?.toLocaleDateString("en-GB")
                             : "-"}
                     </div>
                 </div>

@@ -193,6 +193,12 @@ export default function Partner({
             <span>Affiliate Handle:</span> {partner?.affiliate_handle || "-"}
           </div> */}
           <div>
+            <span>Country:</span> {partner?.country || "-"}
+          </div>
+          <div>
+            <span>City:</span> {partner?.city || "-"}
+          </div>
+          <div>
             <span>Status:</span>{" "}
             <strong className={`status ${partner?.status?.toLowerCase() || ""}`}>
               {partner?.status || "-"}
@@ -210,7 +216,7 @@ export default function Partner({
           <div>
             <span>Created At:</span>{" "}
             {partner?.created_at
-              ? new Date(partner.created_at).toLocaleDateString()
+              ? new Date(partner.created_at).toLocaleDateString("en-GB")
               : "-"}
           </div>
         </div>
@@ -474,7 +480,7 @@ export default function Partner({
                     </td>
                     <td>
                       {store?.created_at
-                        ? new Date(store.created_at).toLocaleDateString()
+                        ? new Date(store.created_at).toLocaleDateString("en-GB")
                         : "-"}
                     </td>
                     <td style={{ overflow: 'visible', position: 'relative' }}>

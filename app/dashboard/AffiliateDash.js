@@ -263,7 +263,7 @@ export default function AffiliateDash() {
                       </span>
                     </td>
                     <td>{item?.refernceLink}</td>
-                    <td>{item?.created_at ? new Date(item?.created_at)?.toLocaleDateString() : ""}</td>
+                    <td>{item?.created_at ? new Date(item?.created_at)?.toLocaleDateString("en-GB") : ""}</td>
                     <td>
                       <button
                         style={{
@@ -346,7 +346,7 @@ export default function AffiliateDash() {
                       </span>
                     </td>
                     <td>
-                      {store?.created_at ? new Date(store?.created_at)?.toLocaleDateString() : "-"}
+                      {store?.created_at ? new Date(store?.created_at)?.toLocaleDateString("en-GB") : "-"}
                     </td>
                     <td>
                       <button

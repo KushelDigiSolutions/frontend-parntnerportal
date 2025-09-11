@@ -13,8 +13,6 @@ export default function DealDash() {
     const [error, setError] = useState("");
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 5;
-    const [requests, setRequests] = useState([]);
-
 
     // filter state
     const [dateFilter, setDateFilter] = useState("all");
@@ -63,16 +61,16 @@ export default function DealDash() {
         fetchDeals();
     }, [role, partnerId]);
 
-    // filter logic
+    // ✅ filter logic
     const filterByDate = (data) => {
         if (dateFilter === "all") return data;
         const today = new Date();
+
         return data.filter((item) => {
             const created = new Date(item?.created_at);
+
             if (dateFilter === "today") {
-                return (
-                    created.toDateString() === today.toDateString()
-                );
+                return created.toDateString() === today.toDateString();
             } else if (dateFilter === "7days") {
                 const past7 = new Date();
                 past7.setDate(today.getDate() - 7);
@@ -86,17 +84,17 @@ export default function DealDash() {
         });
     };
 
-    const filteredData = filterByDate(requests);
-
-    // ✅ Table data + pagination logic (only active deals)
+    // ✅ Table data + filtering + pagination
     const tableData = Array.isArray(deals)
         ? deals.filter((deal) => deal?.status?.toLowerCase() === "active")
         : [];
 
-    const totalPages = Math.ceil(tableData?.length / itemsPerPage) ?? 1;
+    const filteredData = filterByDate(tableData);
+
+    const totalPages = Math.ceil(filteredData?.length / itemsPerPage) ?? 1;
     const startIndex = (currentPage - 1) * itemsPerPage;
     const currentData =
-        tableData?.slice(startIndex, startIndex + itemsPerPage) ?? [];
+        filteredData?.slice(startIndex, startIndex + itemsPerPage) ?? [];
 
     return (
         <div className="affiliate-container">
@@ -143,13 +141,13 @@ export default function DealDash() {
                     <tbody>
                         {loading ? (
                             <tr>
-                                <td colSpan="8" className="no-items">
+                                <td colSpan="9" className="no-items">
                                     Loading...
                                 </td>
                             </tr>
                         ) : error ? (
                             <tr>
-                                <td colSpan="8" className="no-items">
+                                <td colSpan="9" className="no-items">
                                     {error}
                                 </td>
                             </tr>
@@ -160,7 +158,7 @@ export default function DealDash() {
                                     <td>{deal?.store_name}</td>
                                     <td>{deal?.store_owner || "-"}</td>
                                     <td className="capitalize">{deal?.platform}</td>
-                                    <td className="capitalize">{Math.floor(deal?.earning)}</td>
+                                    <td>{Math.floor(deal?.earning)}</td>
                                     <td>{Math.floor(deal?.total_value ?? 0)}</td>
                                     <td className="capitalize">
                                         <span
@@ -181,7 +179,7 @@ export default function DealDash() {
                                     </td>
                                     <td>
                                         {deal?.created_at
-                                            ? new Date(deal?.created_at)?.toLocaleDateString()
+                                            ? new Date(deal?.created_at).toLocaleDateString("en-GB")
                                             : "-"}
                                     </td>
                                     <td>
@@ -212,7 +210,7 @@ export default function DealDash() {
                             ))
                         ) : (
                             <tr>
-                                <td colSpan="8" className="no-items">
+                                <td colSpan="9" className="no-items">
                                     No active deals found
                                 </td>
                             </tr>
@@ -222,7 +220,7 @@ export default function DealDash() {
             </div>
 
             {/* Pagination */}
-            {tableData?.length > 5 && (
+            {filteredData?.length > itemsPerPage && (
                 <div className="pagination">
                     <button
                         onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}

@@ -142,7 +142,7 @@ export default function PartnerDetailsPage() {
                     <div>
                         <span>Created At:</span>{" "}
                         {store.created_at
-                            ? new Date(store.created_at).toLocaleDateString()
+                            ? new Date(store.created_at).toLocaleDateString("en-GB")
                             : ""}
                     </div>
                     <div>
@@ -185,12 +185,12 @@ export default function PartnerDetailsPage() {
                                             <td>{Math.floor(payment?.amount)}</td>
                                             <td>
                                                 {payment.created_at
-                                                    ? new Date(payment?.created_at).toLocaleDateString()
+                                                    ? new Date(payment?.created_at).toLocaleDateString("en-GB")
                                                     : ""}
                                             </td>
                                             <td>
                                                 {payment.end_date
-                                                    ? new Date(payment.end_date).toLocaleDateString()
+                                                    ? new Date(payment.end_date).toLocaleDateString("en-GB")
                                                     : ""}
                                             </td>
                                             <td>{Math.floor((payment.amount * payment.commission) / 100)}</td>

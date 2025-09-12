@@ -8,11 +8,22 @@ import {
 } from "react-icons/fa";
 import { RiArrowDropDownLine } from "react-icons/ri";
 import "./Navbar.css"; // normal CSS import
+import { useRouter } from "next/navigation";
 
 export default function Navbar({ sidebarOpen, setSidebarOpen }) {
+    const router = useRouter();
     const [dropdownOpen, setDropdownOpen] = useState(false);
     const [username, setUsername] = useState("User");
     const dropdownRef = useRef(null);
+    const [isMobile, setIsMobile] = useState(false);
+    const [userProfile, setUserProfile] = useState('')
+
+    useEffect(() => {
+        const checkScreen = () => setIsMobile(window.innerWidth < 768);
+        checkScreen();
+        window.addEventListener("resize", checkScreen);
+        return () => window.removeEventListener("resize", checkScreen);
+    }, []);
 
     useEffect(() => {
         const user = localStorage.getItem("user_data");
@@ -21,6 +32,9 @@ export default function Navbar({ sidebarOpen, setSidebarOpen }) {
                 const userObj = JSON.parse(user);
                 if (userObj?.name) {
                     setUsername(userObj.name);  // yaha "Shubham Gupta" set hoga
+                }
+                if (userObj.probile || userObj.profileImage) {
+                    setUserProfile(userObj.probile || userObj.profileImage)
                 }
             } catch {
                 setUsername("User");
@@ -55,13 +69,27 @@ export default function Navbar({ sidebarOpen, setSidebarOpen }) {
         <header className="navbar">
             {/* Left back button (desktop only) */}
             <button className="back-btn">
-                <FaAngleDoubleLeft className="icon-sm" />
+                {isMobile ? (
+                    <img src="https://partner.krcustomizer.com/favicon.ico?favicon.fc7f51ee.ico" alt="Back" className="icon-mobile" />
+                ) : (
+                    <FaAngleDoubleLeft className="icon-sm" />
+                )}
             </button>
+
 
             {/* Right user info */}
             <div className="user-info">
                 {/* <FaBell className="icon-md" /> */}
-                <FaUserCircle className="icon-lg" />
+                <span
+                    onClick={() => router.push("/edit-profile")}
+                    style={{ cursor: "pointer" }}
+                >
+                    {userProfile ? (
+                        <img src={userProfile} className="icon-lg w-10 rounded-full" />
+                    ) : (
+                        <FaUserCircle className="icon-lg" />
+                    )}
+                </span>
 
                 {/* Username with dropdown */}
                 <div className="user-dropdown" ref={dropdownRef}>

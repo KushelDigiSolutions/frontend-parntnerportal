@@ -214,6 +214,9 @@ export default function Partner({
             <span>Additional Info:</span> {partner?.additional_info || "-"}
           </div>
           <div>
+            <span>Organization Name:</span> {partner?.organization || "-"}
+          </div>
+          <div>
             <span>Created At:</span>{" "}
             {partner?.created_at
               ? new Date(partner.created_at).toLocaleDateString("en-GB")

@@ -17,7 +17,6 @@
 
 /* Left back button (desktop only) */
 .back-btn {
-  display: none;
   background: #f3f4f6;
   border: none;
   padding: 8px;
@@ -70,6 +69,18 @@
   cursor: pointer;
   display: flex;
   align-items: center;
+}
+
+@media(max-width:767px){
+  .back-btn{
+    background: none;
+    padding: 0;
+  }
+
+  .icon-mobile{
+    width: 40px;
+    height: auto;
+  }
 }
 
 

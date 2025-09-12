@@ -1,0 +1,284 @@
+.profile-container {
+    background-color: #fff;
+    padding: 30px;
+    min-height: 100vh;
+}
+
+.profile-title {
+    font-size: 20px;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.profile-subtitle {
+    font-size: 14px;
+    color: #666;
+    margin-bottom: 20px;
+}
+
+.flex-1 {
+    flex: 1;
+}
+
+.profile-form {
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+}
+
+/* Disabled input styling */
+.readonly-input {
+    background-color: #f5f5f5;
+    cursor: not-allowed;
+}
+
+/* Password wrapper */
+.password-wrapper {
+    position: relative;
+    display: flex;
+}
+
+.password-wrapper input {
+    width: 100%;
+    padding-right: 30px;
+    /* space for icon */
+}
+
+.password-toggle {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    color: #555;
+}
+
+.password-toggle:hover {
+    color: #000;
+}
+
+.password-input {
+    position: relative;
+    width: 100%;
+}
+
+.password-input input {
+    width: 100%;
+    padding-right: 35px;
+    /* space for eye icon */
+}
+
+/* --- Base row --- */
+.form-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 20px;
+}
+
+/* --- For two-column layout --- */
+.two-col {
+    display: flex;
+    gap: 20px;
+}
+
+.form-col {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    gap: 6px;
+}
+
+.form-col label {
+    font-size: 15px;
+    font-weight: 600;
+    color: #333;
+}
+
+.form-col input,
+.form-col select,
+.form-col textarea {
+    padding: 8px 10px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 14px;
+}
+
+/* --- Profile Photo --- */
+.profile-photo {
+    display: flex;
+    /* align-items: center; */
+    flex-direction: column;
+    gap: 15px;
+    margin-top: 10px;
+}
+
+.photo-preview {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    border: 2px solid #b4aaaa;
+    object-fit: cover;
+}
+
+/* .upload-btn {
+    padding: 6px 12px;
+    background: #f5f5f5;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    width: 110px;
+} */
+
+.upload-btn {
+  padding: 6px 12px;
+  background: #f5f5f5;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  display: inline-flex; /* icon + text align */
+  align-items: center;
+  gap: 6px;
+  width: 140px;
+}
+
+
+.upload-btn:hover {
+    background: #e9e9e9;
+}
+
+#upload {
+    display: none;
+}
+
+/* --- Actions --- */
+.form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.cancel-btn,
+.save-btn {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 6px;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.cancel-btn {
+    background: #f5f5f5;
+    color: #333;
+}
+
+.save-btn {
+    background: #007bff;
+    color: white;
+}
+
+.cancel-btn:hover {
+    background: #e9e9e9;
+}
+
+.save-btn:hover {
+    background: #0069d9;
+}
+
+/* ===== Responsive ===== */
+
+@media (max-width:1250px){
+    .flex-1{
+        flex-direction: column;
+    }
+}
+
+@media (max-width: 1024px) {
+    .profile-container {
+        padding: 20px;
+    }
+
+    .form-row.two-col {
+        /* flex-direction: column; */
+        gap: 15px;
+    }
+
+    .profile-photo {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+
+    .form-actions {
+        /* flex-direction: column; */
+        align-items: stretch;
+    }
+
+    .cancel-btn,
+    .save-btn {
+        width: 100%;
+    }
+}
+
+@media (max-width: 640px) {
+    .profile-container {
+        padding: 25px;
+    }
+
+    .profile-title {
+        font-size: 18px;
+    }
+
+    .profile-subtitle {
+        font-size: 13px;
+    }
+
+    .photo-preview {
+        width: 100px;
+        height: 100px;
+    }
+
+    .upload-btn {
+        font-size: 13px;
+        padding: 5px 10px;
+    }
+
+    .form-col label {
+        font-size: 14px;
+    }
+
+    .form-col input,
+    .form-col select,
+    .form-col textarea {
+        font-size: 13px;
+        padding: 6px 8px;
+    }
+}
+
+@media (max-width:480px) {
+
+    .profile-container {
+        padding: 25px 25px;
+        margin-top: 8px;
+    }
+
+    .form-row.two-col {
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .form-actions {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .form-col input,
+    .form-col select,
+    .form-col textarea {
+        font-size: 13px;
+        padding: 6px 8px;
+        width: 270px;
+    }
+}

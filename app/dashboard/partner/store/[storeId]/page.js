@@ -103,7 +103,7 @@ export default function StoreDetailsPage() {
             
             // Fetch store details
             const storeRes = await fetch(
-                `https://partnerback.kdscrm.com/partner-store/${storeId}`,
+                `https://partnerback.krcustomizer.com/partner-store/${storeId}`,
                 { method: "GET", headers }
             );
             const storeJson = await storeRes.json();
@@ -119,7 +119,7 @@ export default function StoreDetailsPage() {
 
             // Fetch payment details
             const paymentRes = await fetch(
-                `https://partnerback.kdscrm.com/api/store-payments?store_id=${storeId}`,
+                `https://partnerback.krcustomizer.com/api/store-payments?store_id=${storeId}`,
                 { method: "GET", headers }
             );
             const paymentJson = await paymentRes.json();
@@ -143,7 +143,7 @@ export default function StoreDetailsPage() {
         try {
             const headers = getAuthHeaders();
             const res = await fetch(
-                `https://partnerback.kdscrm.com/api/store-payments`,
+                `https://partnerback.krcustomizer.com/api/store-payments`,
                 {
                     method: "POST",
                     headers,
@@ -177,7 +177,7 @@ export default function StoreDetailsPage() {
         try {
             const headers = getAuthHeaders();
             const res = await fetch(
-                `https://partnerback.kdscrm.com/api/store-payments/${editPayment.id}`,
+                `https://partnerback.krcustomizer.com/api/store-payments/${editPayment.id}`,
                 {
                     method: "PUT",
                     headers,
@@ -215,7 +215,7 @@ export default function StoreDetailsPage() {
         try {
             const token = localStorage?.getItem("user_token");
             const res = await fetch(
-                `https://partnerback.kdscrm.com/api/store-payments/${deleteConfirm.id}`,
+                `https://partnerback.krcustomizer.com/api/store-payments/${deleteConfirm.id}`,
                 {
                     method: "DELETE",
                     headers: token ? { Authorization: `Bearer ${token}` } : {},

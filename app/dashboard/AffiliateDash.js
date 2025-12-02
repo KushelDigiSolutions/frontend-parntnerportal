@@ -45,7 +45,7 @@ export default function AffiliateDash() {
       try {
         if (role === "admin") {
           const res = await fetch(
-            "https://partnerback.kdscrm.com/partner/getAllPartners",
+            "https://partnerback.krcustomizer.com/partner/getAllPartners",
             {
               method: "GET",
               headers: {
@@ -66,7 +66,7 @@ export default function AffiliateDash() {
           }
         } else if (role === "partner" && partnerId) {
           const res = await fetch(
-            `https://partnerback.kdscrm.com/partner-store/partner/${partnerId}`,
+            `https://partnerback.krcustomizer.com/partner-store/partner/${partnerId}`,
             {
               method: "GET",
               headers: {

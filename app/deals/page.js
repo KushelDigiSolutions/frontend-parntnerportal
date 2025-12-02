@@ -37,7 +37,7 @@ export default function DealDash() {
             try {
                 if (role === "partner" && partnerId) {
                     const res = await fetch(
-                        `https://partnerback.kdscrm.com/partner-store/partner/${partnerId}?status=active`,
+                        `https://partnerback.krcustomizer.com/partner-store/partner/${partnerId}?status=active`,
                         {
                             method: "GET",
                             headers: {

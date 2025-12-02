@@ -50,7 +50,7 @@ export default function ProfilePage() {
             try {
                 const token = localStorage.getItem("user_token");
                 const res = await fetch(
-                    `https://partnerback.kdscrm.com/partner/getPartner/${userData?.id}`,
+                    `https://partnerback.krcustomizer.com/partner/getPartner/${userData?.id}`,
                     {
                         method: "GET",
                         headers: {
@@ -125,7 +125,7 @@ export default function ProfilePage() {
             formData.append('image', file);
 
             const token = localStorage.getItem("user_token");
-            const res = await fetch('https://partnerback.kdscrm.com/upload-image', {
+            const res = await fetch('https://partnerback.krcustomizer.com/upload-image', {
                 method: 'POST',
                 headers: {
                     Authorization: `Bearer ${token}`,
@@ -249,7 +249,7 @@ export default function ProfilePage() {
                 payload.profileImage = profilePicFile; // Use profileImage as per your DB schema
             }
 
-            const res = await fetch(`https://partnerback.kdscrm.com/partner/updateProfile`, {
+            const res = await fetch(`https://partnerback.krcustomizer.com/partner/updateProfile`, {
                 method: "PUT",
                 headers: {
                     "Content-Type": "application/json",
@@ -309,7 +309,7 @@ export default function ProfilePage() {
                 payload.profileImage = profilePicFile;
             }
 
-            const res = await fetch(`https://partnerback.kdscrm.com/admin/update/${userData?.id}`, {
+            const res = await fetch(`https://partnerback.krcustomizer.com/admin/update/${userData?.id}`, {
                 method: "PUT",
                 headers: {
                     "Content-Type": "application/json",

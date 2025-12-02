@@ -46,7 +46,7 @@ export default function EarningsPage() {
         const token = localStorage.getItem("user_token");
         const partner = JSON.parse(localStorage.getItem("user_data"));
         const res = await fetch(
-          `https://partnerback.kdscrm.com/api/store-payments/earn/${partner?.id}`,
+          `https://partnerback.krcustomizer.com/api/store-payments/earn/${partner?.id}`,
           {
             method: "GET",
             headers: {

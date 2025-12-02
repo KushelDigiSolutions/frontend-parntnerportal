@@ -28,7 +28,7 @@ export default function PartnerDetailsPage() {
 
                 // ✅ Partner-specific store API
                 const storeRes = await fetch(
-                    `https://partnerback.kdscrm.com/partner-store/${storeDetailId}`,
+                    `https://partnerback.krcustomizer.com/partner-store/${storeDetailId}`,
                     {
                         headers: {
                             "Content-Type": "application/json",
@@ -50,7 +50,7 @@ export default function PartnerDetailsPage() {
 
                 // ✅ Payments for this partner’s store
                 const paymentRes = await fetch(
-                    `https://partnerback.kdscrm.com/api/store-payments?store_id=${storeDetailId}`,
+                    `https://partnerback.krcustomizer.com/api/store-payments?store_id=${storeDetailId}`,
                     {
                         headers: {
                             "Content-Type": "application/json",

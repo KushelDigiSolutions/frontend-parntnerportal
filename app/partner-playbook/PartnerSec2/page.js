@@ -35,7 +35,7 @@ export default function PartnerDashboard() {
         setError("");
         try {
             const token = localStorage.getItem("user_token");
-            const res = await fetch("https://partnerback.kdscrm.com/api/playbooks", {
+            const res = await fetch("https://partnerback.krcustomizer.com/api/playbooks", {
                 method: "GET",
                 headers: {
                     "Content-Type": "application/json",
@@ -67,8 +67,8 @@ export default function PartnerDashboard() {
         try {
             const token = localStorage.getItem("user_token");
             const url = editingId
-                ? `https://partnerback.kdscrm.com/api/playbooks/${editingId}`
-                : "https://partnerback.kdscrm.com/api/playbooks";
+                ? `https://partnerback.krcustomizer.com/api/playbooks/${editingId}`
+                : "https://partnerback.krcustomizer.com/api/playbooks";
 
             const method = editingId ? "PUT" : "POST";
 
@@ -108,7 +108,7 @@ export default function PartnerDashboard() {
     const handleDelete = async () => {
         try {
             const token = localStorage.getItem("user_token");
-            const res = await fetch(`https://partnerback.kdscrm.com/api/playbooks/${deleteId}`, {
+            const res = await fetch(`https://partnerback.krcustomizer.com/api/playbooks/${deleteId}`, {
                 method: "DELETE",
                 headers: {
                     "Content-Type": "application/json",

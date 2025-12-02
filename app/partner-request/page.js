@@ -26,7 +26,7 @@ export default function PartnerRequest() {
             setError("");
             try {
                 const res = await fetch(
-                    "https://partnerback.kdscrm.com/partner/getAllPartners",
+                    "https://partnerback.krcustomizer.com/partner/getAllPartners",
                     {
                         method: "GET",
                         headers: {
@@ -365,7 +365,7 @@ function DropdownMenu({ item, onView }) {
         try {
             const token = localStorage.getItem("user_token");
             const res = await fetch(
-                "https://partnerback.kdscrm.com/partner/approvePartner",
+                "https://partnerback.krcustomizer.com/partner/approvePartner",
                 {
                     method: "POST",
                     headers: {
@@ -394,7 +394,7 @@ function DropdownMenu({ item, onView }) {
         try {
             const token = localStorage.getItem("user_token");
             const res = await fetch(
-                "https://partnerback.kdscrm.com/partner/rejectPartner",
+                "https://partnerback.krcustomizer.com/partner/rejectPartner",
                 {
                     method: "POST",
                     headers: {

@@ -19,7 +19,7 @@ export default function PartnerPage() {
     try {
       const token = localStorage.getItem("user_token");
       // Fetch partner info
-      const partnerRes = await fetch(`https://partnerback.kdscrm.com/partner/getPartner/${id}`, {
+      const partnerRes = await fetch(`https://partnerback.krcustomizer.com/partner/getPartner/${id}`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -33,7 +33,7 @@ export default function PartnerPage() {
         setError(partnerJson.message || "Failed to fetch partner data");
       }
       // Fetch partner stores
-      const storeRes = await fetch(`https://partnerback.kdscrm.com/partner-store/partner/${id}`, {
+      const storeRes = await fetch(`https://partnerback.krcustomizer.com/partner-store/partner/${id}`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -75,7 +75,7 @@ export default function PartnerPage() {
     };
     try {
       const token = localStorage.getItem("user_token");
-      const res = await fetch("https://partnerback.kdscrm.com/partner-store", {
+      const res = await fetch("https://partnerback.krcustomizer.com/partner-store", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -117,7 +117,7 @@ export default function PartnerPage() {
 
     try {
       const token = localStorage.getItem("user_token");
-      const res = await fetch(`https://partnerback.kdscrm.com/partner-store/${storeId}`, {
+      const res = await fetch(`https://partnerback.krcustomizer.com/partner-store/${storeId}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -129,7 +129,7 @@ export default function PartnerPage() {
       const data = await res.json();
       if (res.ok && data.success) {
         const storeRes = await fetch(
-          `https://partnerback.kdscrm.com/partner-store/partner/${partner.id}`,
+          `https://partnerback.krcustomizer.com/partner-store/partner/${partner.id}`,
           {
             method: "GET",
             headers: {
@@ -164,7 +164,7 @@ export default function PartnerPage() {
         requestBody.inactive_reason = reason;
       }
 
-      const res = await fetch(`https://partnerback.kdscrm.com/partner-store/${storeId}`, {
+      const res = await fetch(`https://partnerback.krcustomizer.com/partner-store/${storeId}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -180,7 +180,7 @@ export default function PartnerPage() {
 
         // ✅ Refresh all stores for the partner
         const storeRes = await fetch(
-          `https://partnerback.kdscrm.com/partner-store/partner/${partner.id}`,
+          `https://partnerback.krcustomizer.com/partner-store/partner/${partner.id}`,
           {
             method: "GET",
             headers: {

@@ -28,7 +28,7 @@ export default function ReferClient() {
             try {
                 setLoading(true);
                 const res = await fetch(
-                    "https://partnerback.kdscrm.com/api/refral",
+                    "https://partnerback.krcustomizer.com/api/refral",
                     {
                         method: "GET",
                         headers: {
@@ -88,7 +88,7 @@ export default function ReferClient() {
         const token = localStorage.getItem("user_token");
         try {
             const res = await fetch(
-                `https://partnerback.kdscrm.com/api/refral/${id}`,
+                `https://partnerback.krcustomizer.com/api/refral/${id}`,
                 {
                     method: "PUT",
                     headers: {

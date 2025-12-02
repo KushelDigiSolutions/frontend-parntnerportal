@@ -25,7 +25,7 @@ export default function Login() {
     setLoading(true);
     setError("");
     try {
-      const res = await fetch("https://partnerback.kdscrm.com/auth/login", {
+      const res = await fetch("https://partnerback.krcustomizer.com/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
@@ -56,7 +56,7 @@ export default function Login() {
     setSuccessMsg("");
     try {
       // Step 1: Send email for OTP
-      const res = await fetch("https://partnerback.kdscrm.com/auth/forgetPassword", {
+      const res = await fetch("https://partnerback.krcustomizer.com/auth/forgetPassword", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email }),
@@ -81,7 +81,7 @@ export default function Login() {
     setSuccessMsg("");
     try {
       // Step 2: Verify OTP
-      const res = await fetch("https://partnerback.kdscrm.com/auth/validateOtp", {
+      const res = await fetch("https://partnerback.krcustomizer.com/auth/validateOtp", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, otp }),
@@ -112,7 +112,7 @@ export default function Login() {
     }
     try {
       // Step 3: Reset password (send resetToken, not OTP)
-      const res = await fetch("https://partnerback.kdscrm.com/auth/resetPassword", {
+      const res = await fetch("https://partnerback.krcustomizer.com/auth/resetPassword", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, newPassword, resetToken }),

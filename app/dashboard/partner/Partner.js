@@ -187,7 +187,7 @@ export default function Partner({
             <span>Phone:</span> {partner?.mobilePhone || "-"}
           </div>
           <div>
-            <span>Platform:</span> {partner?.platform || "-"}
+            <span>Platform:</span> <span className="capitalize !font-medium">{partner?.platform || "-"}</span>
           </div>
           {/* <div>
             <span>Affiliate Handle:</span> {partner?.affiliate_handle || "-"}
@@ -347,7 +347,7 @@ export default function Partner({
 
                 <div style={{ marginBottom: 14 }}>
                   <label style={{ display: "block", fontWeight: 500, marginBottom: 4 }}>Commission (%)</label>
-                  <input name="commission" value={newStore?.commission || ""} onChange={handleAddStoreChange} required type="number" min="0" max="100" style={{ width: "100%", padding: 8, borderRadius: 4, border: "1px solid #ccc" }} placeholder="e.g. 75" />
+                  <input name="commission" value={newStore?.commission || ""} onChange={handleAddStoreChange} required type="text" min="0" max="100" style={{ width: "100%", padding: 8, borderRadius: 4, border: "1px solid #ccc" }} placeholder="e.g. 75" />
                 </div>
                 <div style={{ marginBottom: 18 }}>
                   <label style={{ display: "block", fontWeight: 500, marginBottom: 4 }}>Total Value</label>
@@ -612,7 +612,7 @@ export default function Partner({
                                   <circle cx="12" cy="12" r="10" />
                                   <path d="M15 9l-6 6M9 9l6 6" />
                                 </svg>{" "}
-                                Deactivate
+                                Inactive
                               </button>
                             ) : (
                               <button
@@ -641,7 +641,7 @@ export default function Partner({
                                   <circle cx="12" cy="12" r="10" />
                                   <path d="M9 12l2 2 4-4" />
                                 </svg>{" "}
-                                Activate
+                                Active
                               </button>
                             )}
                           </div>

@@ -38,35 +38,45 @@ export default function EarningsPage() {
   }, [dropdownOpen]);
 
   // Fetch earnings payments for partner
-  useEffect(() => {
-    async function fetchPayments() {
-      setLoading(true);
-      setError("");
-      try {
-        const token = localStorage.getItem("user_token");
-        const partner = JSON.parse(localStorage.getItem("user_data"));
-        const res = await fetch(
-          `https://partnerback.krcustomizer.com/api/store-payments/earn/${partner?.id}`,
-          {
-            method: "GET",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-        const json = await res.json();
-        if (res.ok && json?.success) {
-          setPayments(json?.data ?? []);
-        } else {
-          setError(json?.message ?? "Failed to fetch payments");
+  const fetchPayments = async () => {
+    setLoading(true);
+    setError("");
+    try {
+      const token = localStorage.getItem("user_token");
+      const partner = JSON.parse(localStorage.getItem("user_data"));
+      const res = await fetch(
+        `https://partnerback.krcustomizer.com/api/store-payments/earn/${partner?.id}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
         }
-      } catch (err) {
-        setError("Network error");
+      );
+      const json = await res.json();
+      if (res.ok && json?.success) {
+        setPayments(json?.data ?? []);
+      } else {
+        setError(json?.message ?? "Failed to fetch payments");
       }
-      setLoading(false);
+    } catch (err) {
+      setError("Network error");
     }
+    setLoading(false);
+  };
+
+  useEffect(() => {
     fetchPayments();
+  }, []);
+
+  // Refetch payments when window gains focus (e.g., after navigating back from partner page)
+  useEffect(() => {
+    const handleFocus = () => {
+      fetchPayments();
+    };
+    window.addEventListener('focus', handleFocus);
+    return () => window.removeEventListener('focus', handleFocus);
   }, []);
 
   // 🔹 Filter payments based on selected date range

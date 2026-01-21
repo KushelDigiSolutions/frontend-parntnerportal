@@ -3,6 +3,8 @@ import React, { useEffect, useRef, useState } from "react";
 import { FiEye } from "react-icons/fi";
 import { BsThreeDotsVertical } from "react-icons/bs";
 import { MdCheckCircle, MdCancel } from "react-icons/md";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import "../dashboard/AffiliateDash.css";
 
 // ✅ Helper function to sort by date (newest first)
@@ -73,6 +75,7 @@ export default function PartnerRequest() {
 
     return (
         <div className="affiliate-container">
+            <ToastContainer position="top-center" />
             <div className="header">
                 <h2>Partner Requests</h2>
             </div>
@@ -179,14 +182,14 @@ export default function PartnerRequest() {
                                     <td>{item.name}</td>
                                     <td>{item.email}</td>
                                     <td>{item.mobilePhone}</td>
-                                    <td>{item.platform}</td>
+                                    <td className="capitalize">{item.platform}</td>
                                     {/* <td>{item.affiliate_handle}</td> */}
-                                    <td>
+                                    <td className="capitalize">
                                         <span className={`status ${item.status?.toLowerCase()}`}>
                                             {item.status}
                                         </span>
                                     </td>
-                                    <td>{item.refernceLink}</td>
+                                    <td>{item.refernceLink|| '-'}</td>
                                     <td>
                                         {item.created_at
                                             ? new Date(item.created_at).toLocaleDateString("en-GB")
@@ -377,14 +380,14 @@ function DropdownMenu({ item, onView }) {
             );
             const data = await res.json();
             if (res.ok && data.success) {
-                alert("Partner approved successfully");
+                toast.success("Partner approved successfully");
                 setOpen(false);
                 window.location.reload();
             } else {
-                alert(data.message || "Failed to approve partner");
+                toast.error(data.message || "Failed to approve partner");
             }
         } catch (err) {
-            alert("Network error");
+            toast.error("Network error");
         }
         setLoadingType(null);
     }
@@ -406,14 +409,14 @@ function DropdownMenu({ item, onView }) {
             );
             const data = await res.json();
             if (res.ok && data.success) {
-                alert("Partner rejected successfully");
+                toast.success("Partner rejected successfully");
                 setOpen(false);
                 window.location.reload();
             } else {
-                alert(data.message || "Failed to reject partner");
+                toast.error(data.message || "Failed to reject partner");
             }
         } catch (err) {
-            alert("Network error");
+            toast.error("Network error");
         }
         setLoadingType(null);
     }

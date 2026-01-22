@@ -20,7 +20,8 @@ export default function ReferClient() {
     const itemsPerPage = 5;
 
     // filter state
-    const [dateFilter, setDateFilter] = useState("all");
+    const [dateFilter, setDateFilter] = useState("");
+    const [referredByFilter, setReferredByFilter] = useState("");
 
     useEffect(() => {
         (async () => {
@@ -51,30 +52,47 @@ export default function ReferClient() {
         })();
     }, []);
 
-    // filter logic
-    const filterByDate = (data) => {
-        if (dateFilter === "all") return data;
-        const today = new Date();
-        return data.filter((item) => {
-            const created = new Date(item?.created_at);
-            if (dateFilter === "today") {
-                return (
-                    created.toDateString() === today.toDateString()
-                );
-            } else if (dateFilter === "7days") {
-                const past7 = new Date();
-                past7.setDate(today.getDate() - 7);
-                return created >= past7;
-            } else if (dateFilter === "30days") {
-                const past30 = new Date();
-                past30.setDate(today.getDate() - 30);
-                return created >= past30;
-            }
-            return true;
-        });
+    // filter logic (date + referred by)
+    const filterData = (data) => {
+        let out = Array.isArray(data) ? data.slice() : [];
+
+        // date filter
+        if (dateFilter && dateFilter !== "all") {
+            const today = new Date();
+            out = out.filter((item) => {
+                const created = new Date(item?.created_at);
+                if (dateFilter === "today") {
+                    return created.toDateString() === today.toDateString();
+                } else if (dateFilter === "7days") {
+                    const past7 = new Date();
+                    past7.setDate(today.getDate() - 7);
+                    return created >= past7;
+                } else if (dateFilter === "30days") {
+                    const past30 = new Date();
+                    past30.setDate(today.getDate() - 30);
+                    return created >= past30;
+                }
+                return true;
+            });
+        }
+
+        // referred by filter
+        if (referredByFilter && referredByFilter !== "all") {
+            out = out.filter((item) => (item?.partner_name || "").toString() === referredByFilter);
+        }
+
+        return out;
     };
 
-    const filteredData = filterByDate(requests);
+    const filteredData = filterData(requests);
+
+    const partnerNames = Array.from(
+        new Set(
+            (requests || [])
+                .map((r) => (r?.partner_name || "").toString())
+                .filter((n) => n && n !== "")
+        )
+    );
 
     // pagination logic
     const totalPages = Math.ceil(filteredData?.length / itemsPerPage);
@@ -120,20 +138,43 @@ export default function ReferClient() {
             </div>
 
             <div className="filter-container">
-                <label htmlFor="dateFilter">Filter by Date:</label>
-                <select
-                    id="dateFilter"
-                    value={dateFilter}
-                    onChange={(e) => {
-                        setDateFilter(e.target.value);
-                        setCurrentPage(1);
-                    }}
-                >
-                    <option value="all">All</option>
-                    <option value="today">Today</option>
-                    <option value="7days">Last 7 Days</option>
-                    <option value="30days">Last 30 Days</option>
-                </select>
+                <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+                    <select
+                        id="dateFilter"
+                        value={dateFilter}
+                        onChange={(e) => {
+                            setDateFilter(e.target.value);
+                            setCurrentPage(1);
+                        }}
+                    >
+                        <option value="" disabled>
+                            Filter by Date
+                        </option>
+                        <option value="all">All</option>
+                        <option value="today">Today</option>
+                        <option value="7days">Last 7 Days</option>
+                        <option value="30days">Last 30 Days</option>
+                    </select>
+
+                    <select
+                        id="referredByFilter"
+                        value={referredByFilter}
+                        onChange={(e) => {
+                            setReferredByFilter(e.target.value);
+                            setCurrentPage(1);
+                        }}
+                    >
+                        <option value="" disabled>
+                            Filter by Referred
+                        </option>
+                        <option value="all">All</option>
+                        {partnerNames.map((name) => (
+                            <option key={name} value={name}>
+                                {name}
+                            </option>
+                        ))}
+                    </select>
+                </div>
             </div>
 
 
@@ -454,7 +495,8 @@ const popupStyle = {
     background: "#fff",
     borderRadius: 10,
     minWidth: 340,
-    maxWidth: 630,
+    maxWidth: 720,
+    width: "100%",   
     padding: 32,
     boxShadow: "0 4px 24px rgba(0,0,0,0.12)",
     position: "relative",

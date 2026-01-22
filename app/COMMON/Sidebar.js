@@ -48,7 +48,9 @@ export default function Sidebar({ open }) {
         <ul>
           {menuItems.map((item) => {
             const itemPath = item.link || `/${item.name.toLowerCase().replace(/ /g, "-")}`;
-            const isActive = pathname === itemPath;
+            const isActive =
+              pathname === itemPath ||
+              (itemPath !== "/" && pathname?.startsWith(itemPath + "/"));
             return (
               <li key={item.name} className={`sidebar-item${isActive ? " active bg-blue-100" : ""}`}>
                 <Link href={itemPath} className="sidebar-link flex items-center gap-2">

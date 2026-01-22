@@ -52,6 +52,8 @@ export default function Partner({
   const [deactivatingStore, setDeactivatingStore] = useState(null);
   const [deactivationReason, setDeactivationReason] = useState("");
   const [editStore, setEditStore] = useState(null);
+  const [addingStore, setAddingStore] = useState(false);
+  const [toast ,setToast]=useState(false)
   const [newStore, setNewStore] = useState({
     store_name: "",
     store_owner: "",
@@ -65,11 +67,29 @@ export default function Partner({
   const handleAddStoreChange = (e) => {
     const { name, value } = e.target;
     setNewStore((prev) => ({ ...prev, [name]: value }));
+    setToast(false)
   };
 
-  const handleAddStoreSubmit = async (e) => {
-    e.preventDefault();
-    console.log(newStore);
+const handleAddStoreSubmit = async (e) => {
+  e.preventDefault();
+
+  // duplicate check
+  const isDuplicate = stores.some(
+    (store) =>
+      store.store_name?.toLowerCase().trim() ===
+        newStore.store_name?.toLowerCase().trim() &&
+      store.platform?.toLowerCase() ===
+        newStore.platform?.toLowerCase()
+  );
+
+  if (isDuplicate) {
+setToast(true)
+    // alert("Store with same name and platform already exists!");
+    return;
+  }
+
+  try {
+    setAddingStore(true); // 🔥 start loading
 
     if (onAddStore) {
       await onAddStore(
@@ -85,12 +105,23 @@ export default function Partner({
         () => setShowAddModal(false)
       );
     }
-  };
+  } catch (error) {
+    console.error("Error adding store:", error);
+  } finally {
+    setAddingStore(false); // 🔥 stop loading
+  }
+};
+
+
 
   const handleDeactivateSubmit = async (e) => {
     e.preventDefault();
     if (onUpdateStatus && deactivatingStore) {
-      await onUpdateStatus(deactivatingStore?.id, "inactive", deactivationReason);
+      await onUpdateStatus(
+        deactivatingStore?.id,
+        "inactive",
+        deactivationReason,
+      );
       setShowDeactivateModal(false);
       setDeactivatingStore(null);
       setDeactivationReason("");
@@ -109,7 +140,8 @@ export default function Partner({
   const itemsPerPage = 5;
   const totalPages = Math.ceil((stores?.length || 0) / itemsPerPage) || 1;
   const startIndex = (currentPage - 1) * itemsPerPage;
-  const currentStores = stores?.slice(startIndex, startIndex + itemsPerPage) || [];
+  const currentStores =
+    stores?.slice(startIndex, startIndex + itemsPerPage) || [];
 
   const dropdownItemStyle = {
     display: "flex",
@@ -140,6 +172,38 @@ export default function Partner({
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [dropdownOpen]);
+  const [ConfirmedPartners, setConfirmedPartners] = useState([]);
+  const fetchConfirmedPartners = async () => {
+    try {
+      const token = localStorage.getItem("user_token");
+      const res = await fetch(
+        "https://partnerback.krcustomizer.com/api/refral",
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
+      );
+
+      const result = await res.json();
+
+      if (result.success && Array.isArray(result.data)) {
+        return result.data.filter((item) => item.status === "confirmed");
+      }
+      return [];
+    } catch (err) {
+      console.error(err);
+      return [];
+    }
+  };
+
+  useEffect(() => {
+    if (showAddModal) {
+      fetchConfirmedPartners().then((partners) => {
+        setConfirmedPartners(partners);
+      });
+    }
+  }, [showAddModal]);
 
   return (
     <div className="affiliate-container">
@@ -187,7 +251,10 @@ export default function Partner({
             <span>Phone:</span> {partner?.mobilePhone || "-"}
           </div>
           <div>
-            <span>Platform:</span> <span className="capitalize !font-medium">{partner?.platform || "-"}</span>
+            <span>Platform:</span>{" "}
+            <span className="capitalize !font-medium">
+              {partner?.platform || "-"}
+            </span>
           </div>
           {/* <div>
             <span>Affiliate Handle:</span> {partner?.affiliate_handle || "-"}
@@ -200,7 +267,9 @@ export default function Partner({
           </div>
           <div>
             <span>Status:</span>{" "}
-            <strong className={`status ${partner?.status?.toLowerCase() || ""}`}>
+            <strong
+              className={`status ${partner?.status?.toLowerCase() || ""}`}
+            >
               {partner?.status || "-"}
             </strong>
           </div>
@@ -303,7 +372,7 @@ export default function Partner({
                           commission: "",
                           total_value: "",
                         }),
-                      () => setShowAddModal(false)
+                      () => setShowAddModal(false),
                     );
                     setEditStore(null);
                   } else {
@@ -312,15 +381,59 @@ export default function Partner({
                 }}
               >
                 <div style={{ marginBottom: 14 }}>
-                  <label style={{ display: "block", fontWeight: 500, marginBottom: 4 }}>Store Name</label>
-                  <input name="store_name" value={newStore?.store_name || ""} onChange={handleAddStoreChange} required style={{ width: "100%", padding: 8, borderRadius: 4, border: "1px solid #ccc" }} />
+                  <label
+                    style={{
+                      display: "block",
+                      fontWeight: 500,
+                      marginBottom: 4,
+                    }}
+                  >
+                    Store Name
+                  </label>
+                  <input
+                    name="store_name"
+                    value={newStore?.store_name || ""}
+                    onChange={handleAddStoreChange}
+                    required
+                    style={{
+                      width: "100%",
+                      padding: 8,
+                      borderRadius: 4,
+                      border: "1px solid #ccc",
+                    }}
+                  />
                 </div>
+                <select
+                  name="store_owner"
+                  value={newStore?.store_owner || ""}
+                  onChange={handleAddStoreChange}
+                  required
+                  style={{
+                    width: "100%",
+                    padding: 8,
+                    borderRadius: 4,
+                    border: "1px solid #ccc",
+                    background: "#fff",
+                    fontSize: 15,
+                  }}
+                >
+                  <option value="">-- Select Store Owner --</option>
+                  {ConfirmedPartners.filter(
+                    (partner) => partner.status === "confirmed",
+                  ).map((partner) => (
+                    <option key={partner.id} value={partner.name}>
+                      {partner.name} ({partner.email})
+                    </option>
+                  ))}
+                </select>
                 <div style={{ marginBottom: 14 }}>
-                  <label style={{ display: "block", fontWeight: 500, marginBottom: 4 }}>Store Owner</label>
-                  <input name="store_owner" value={newStore?.store_owner || ""} onChange={handleAddStoreChange} required style={{ width: "100%", padding: 8, borderRadius: 4, border: "1px solid #ccc" }} />
-                </div>
-                <div style={{ marginBottom: 14 }}>
-                  <label style={{ display: "block", fontWeight: 500, marginBottom: 4 }}>
+                  <label
+                    style={{
+                      display: "block",
+                      fontWeight: 500,
+                      marginBottom: 4,
+                    }}
+                  >
                     Platform
                   </label>
                   <select
@@ -346,14 +459,79 @@ export default function Partner({
                 </div>
 
                 <div style={{ marginBottom: 14 }}>
-                  <label style={{ display: "block", fontWeight: 500, marginBottom: 4 }}>Commission (%)</label>
-                  <input name="commission" value={newStore?.commission || ""} onChange={handleAddStoreChange} required type="text" min="0" max="100" style={{ width: "100%", padding: 8, borderRadius: 4, border: "1px solid #ccc" }} placeholder="e.g. 75" />
+                  <label
+                    style={{
+                      display: "block",
+                      fontWeight: 500,
+                      marginBottom: 4,
+                    }}
+                  >
+                    Commission (%)
+                  </label>
+                  <input
+                    name="commission"
+                    value={newStore?.commission || ""}
+                    onChange={handleAddStoreChange}
+                    required
+                    type="text"
+                    min="0"
+                    max="100"
+                    style={{
+                      width: "100%",
+                      padding: 8,
+                      borderRadius: 4,
+                      border: "1px solid #ccc",
+                    }}
+                    placeholder="e.g. 75"
+                  />
                 </div>
                 <div style={{ marginBottom: 18 }}>
-                  <label style={{ display: "block", fontWeight: 500, marginBottom: 4 }}>Total Value</label>
-                  <input name="total_value" value={newStore?.total_value || ""} onChange={handleAddStoreChange} required type="number" min="0" step="0.01" style={{ width: "100%", padding: 8, borderRadius: 4, border: "1px solid #ccc" }} placeholder="e.g. 1200.00" />
+                  <label
+                    style={{
+                      display: "block",
+                      fontWeight: 500,
+                      marginBottom: 4,
+                    }}
+                  >
+                    Total Value
+                  </label>
+                  <input
+                    name="total_value"
+                    value={newStore?.total_value || ""}
+                    onChange={handleAddStoreChange}
+                    required
+                    type="number"
+                    min="0"
+                    step="0.01"
+                    style={{
+                      width: "100%",
+                      padding: 8,
+                      borderRadius: 4,
+                      border: "1px solid #ccc",
+                    }}
+                    placeholder="e.g. 1200.00"
+                  />
                 </div>
-                <button type="submit" style={{ background: "#4f46e5", color: "#fff", border: "none", borderRadius: 4, padding: "8px 20px", fontWeight: 600, fontSize: 16, cursor: "pointer", width: "100%" }}>{editStore ? "Update Store" : "Add Store"}</button>
+                {toast && <p className="text-[red] mb-2">Store with same name and platform already exists!</p>}
+              <button
+  type="submit"
+  disabled={addingStore}
+  style={{
+    background: addingStore ? "#a5b4fc" : "#4f46e5",
+    color: "#fff",
+    border: "none",
+    borderRadius: 4,
+    padding: "8px 20px",
+    fontWeight: 600,
+    fontSize: 16,
+    cursor: addingStore ? "not-allowed" : "pointer",
+    width: "100%",
+    opacity: addingStore ? 0.8 : 1,
+  }}
+>
+  {addingStore ? "Adding store..." : editStore ? "Update Store" : "Add Store"}
+</button>
+
               </form>
             </div>
           </div>
@@ -386,12 +564,21 @@ export default function Partner({
                 Deactivate Store
               </h3>
               <p style={{ marginBottom: 16, color: "#666" }}>
-                Are you sure you want to deactivate "{deactivatingStore?.store_name}"? Please provide a reason for deactivation.
+                Are you sure you want to deactivate "
+                {deactivatingStore?.store_name}"? Please provide a reason for
+                deactivation.
               </p>
               <form onSubmit={handleDeactivateSubmit}>
                 <div style={{ marginBottom: 18 }}>
-                  <label style={{ display: "block", fontWeight: 500, marginBottom: 6 }}>
-                    Reason for Deactivation <span style={{ color: "#ef4444" }}>*</span>
+                  <label
+                    style={{
+                      display: "block",
+                      fontWeight: 500,
+                      marginBottom: 6,
+                    }}
+                  >
+                    Reason for Deactivation{" "}
+                    <span style={{ color: "#ef4444" }}>*</span>
                   </label>
                   <textarea
                     value={deactivationReason}
@@ -410,7 +597,13 @@ export default function Partner({
                     placeholder="Please explain why this store is being deactivated..."
                   />
                 </div>
-                <div style={{ display: "flex", gap: 12, justifyContent: "flex-end" }}>
+                <div
+                  style={{
+                    display: "flex",
+                    gap: 12,
+                    justifyContent: "flex-end",
+                  }}
+                >
                   <button
                     type="button"
                     onClick={() => {
@@ -451,8 +644,8 @@ export default function Partner({
         )}
 
         {/* Stores Table */}
-        <div className="table-container" style={{ overflow: 'visible' }}>
-          <table style={{ overflow: 'visible' }}>
+        <div className="table-container" style={{ overflow: "visible" }}>
+          <table style={{ overflow: "visible" }}>
             <thead>
               <tr>
                 <th>#</th>
@@ -466,19 +659,21 @@ export default function Partner({
                 <th>Action</th>
               </tr>
             </thead>
-            <tbody style={{ overflow: 'visible' }}>
+            <tbody style={{ overflow: "visible" }}>
               {currentStores?.length > 0 ? (
                 currentStores.map((store, idx) => (
-                  <tr key={store?.id} style={{ overflow: 'visible' }}>
+                  <tr key={store?.id} style={{ overflow: "visible" }}>
                     <td>{startIndex + idx + 1}</td>
-                    <td>{store?.store_name || '-'}</td>
-                    <td>{store?.store_owner || '-'}</td>
-                    <td className="capitalize">{store?.platform || '-'}</td>
+                    <td>{store?.store_name || "-"}</td>
+                    <td>{store?.store_owner || "-"}</td>
+                    <td className="capitalize">{store?.platform || "-"}</td>
                     <td>{Math.floor(store?.earning || 0)}</td>
                     <td>{Math.floor(store?.total_value || 0)}</td>
                     <td className="capitalize">
-                      <span className={`status ${store?.status?.toLowerCase() || ""}`}>
-                        {store?.status || '-'}
+                      <span
+                        className={`status ${store?.status?.toLowerCase() || ""}`}
+                      >
+                        {store?.status || "-"}
                       </span>
                     </td>
                     <td>
@@ -486,11 +681,11 @@ export default function Partner({
                         ? new Date(store.created_at).toLocaleDateString("en-GB")
                         : "-"}
                     </td>
-                    <td style={{ overflow: 'visible', position: 'relative' }}>
+                    <td style={{ overflow: "visible", position: "relative" }}>
                       <div
                         style={{
                           position: "relative",
-                          display: "inline-block"
+                          display: "inline-block",
                         }}
                         ref={(el) => (dropdownRefs.current[store?.id] = el)}
                       >
@@ -507,12 +702,18 @@ export default function Partner({
                           }}
                           onClick={(e) => {
                             e.stopPropagation();
-                            setDropdownOpen(dropdownOpen === store?.id ? null : store?.id);
+                            setDropdownOpen(
+                              dropdownOpen === store?.id ? null : store?.id,
+                            );
                           }}
                           type="button"
                         >
                           <BsThreeDotsVertical
-                            style={{ color: "#4f46e5", fontSize: 18, marginRight: 4 }}
+                            style={{
+                              color: "#4f46e5",
+                              fontSize: 18,
+                              marginRight: 4,
+                            }}
                           />
                         </button>
                         {dropdownOpen === store?.id && (
@@ -529,16 +730,20 @@ export default function Partner({
                               minWidth: 140,
                               zIndex: 9999,
                               marginTop: 8,
-                              overflow: 'visible'
+                              overflow: "visible",
                             }}
                           >
                             <button
                               style={{
                                 ...dropdownItemStyle,
-                                borderBottom: '1px solid #f5f5f5'
+                                borderBottom: "1px solid #f5f5f5",
                               }}
-                              onMouseEnter={(e) => e.target.style.backgroundColor = '#f8f9fa'}
-                              onMouseLeave={(e) => e.target.style.backgroundColor = 'transparent'}
+                              onMouseEnter={(e) =>
+                                (e.target.style.backgroundColor = "#f8f9fa")
+                              }
+                              onMouseLeave={(e) =>
+                                (e.target.style.backgroundColor = "transparent")
+                              }
                               onClick={() => {
                                 setDropdownOpen(null);
                                 window.location.href = `/dashboard/partner/store/${store?.id}`;
@@ -549,10 +754,14 @@ export default function Partner({
                             <button
                               style={{
                                 ...dropdownItemStyle,
-                                borderBottom: '1px solid #f5f5f5'
+                                borderBottom: "1px solid #f5f5f5",
                               }}
-                              onMouseEnter={(e) => e.target.style.backgroundColor = '#f8f9fa'}
-                              onMouseLeave={(e) => e.target.style.backgroundColor = 'transparent'}
+                              onMouseEnter={(e) =>
+                                (e.target.style.backgroundColor = "#f8f9fa")
+                              }
+                              onMouseLeave={(e) =>
+                                (e.target.style.backgroundColor = "transparent")
+                              }
                               onClick={() => {
                                 setDropdownOpen(null);
                                 setEditStore(store);
@@ -561,9 +770,12 @@ export default function Partner({
                                   store_owner: store?.store_owner || "",
                                   platform: store?.platform || "",
                                   commission:
-                                    ((store?.earning || 0) / (store?.total_value || 1)) * 100 || "",
+                                    ((store?.earning || 0) /
+                                      (store?.total_value || 1)) *
+                                      100 || "",
                                   earning: Math.floor(store?.earning || 0),
-                                  total_value: Math.floor(store?.total_value || 0) || "",
+                                  total_value:
+                                    Math.floor(store?.total_value || 0) || "",
                                 });
                                 setShowAddModal(true);
                               }}
@@ -588,10 +800,15 @@ export default function Partner({
                               <button
                                 style={{
                                   ...dropdownItemStyle,
-                                  borderBottom: 'none'
+                                  borderBottom: "none",
                                 }}
-                                onMouseEnter={(e) => e.target.style.backgroundColor = '#fef2f2'}
-                                onMouseLeave={(e) => e.target.style.backgroundColor = 'transparent'}
+                                onMouseEnter={(e) =>
+                                  (e.target.style.backgroundColor = "#fef2f2")
+                                }
+                                onMouseLeave={(e) =>
+                                  (e.target.style.backgroundColor =
+                                    "transparent")
+                                }
                                 onClick={() => {
                                   setDeactivatingStore(store);
                                   setShowDeactivateModal(true);
@@ -618,10 +835,15 @@ export default function Partner({
                               <button
                                 style={{
                                   ...dropdownItemStyle,
-                                  borderBottom: 'none'
+                                  borderBottom: "none",
                                 }}
-                                onMouseEnter={(e) => e.target.style.backgroundColor = '#f0fdf4'}
-                                onMouseLeave={(e) => e.target.style.backgroundColor = 'transparent'}
+                                onMouseEnter={(e) =>
+                                  (e.target.style.backgroundColor = "#f0fdf4")
+                                }
+                                onMouseLeave={(e) =>
+                                  (e.target.style.backgroundColor =
+                                    "transparent")
+                                }
                                 onClick={() => {
                                   onUpdateStatus?.(store?.id, "active");
                                   setDropdownOpen(null);
@@ -688,7 +910,6 @@ export default function Partner({
           </div>
         )}
       </div>
-
     </div>
   );
 }
